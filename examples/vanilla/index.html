@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@carousel/vanilla example</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <h1>Vanilla Carousel</h1>
+      <p class="hint">Drag, use arrow keys, or click the buttons.</p>
+
+      <div class="effect-picker">
+        <label for="effect">Effect:</label>
+        <select id="effect">
+          <option value="slide">slide</option>
+          <option value="fade">fade</option>
+          <option value="card">card</option>
+          <option value="cube">cube</option>
+          <option value="coverflow" selected>coverflow</option>
+          <option value="creative">creative</option>
+        </select>
+      </div>
+
+      <section class="carousel" id="carousel" tabindex="0">
+        <div class="carousel__viewport" id="viewport">
+          <div class="carousel__track" id="track">
+            <div class="carousel__slide" style="background:#ef4444">1</div>
+            <div class="carousel__slide" style="background:#f59e0b">2</div>
+            <div class="carousel__slide" style="background:#10b981">3</div>
+            <div class="carousel__slide" style="background:#3b82f6">4</div>
+            <div class="carousel__slide" style="background:#a855f7">5</div>
+          </div>
+        </div>
+        <div class="controls">
+          <button id="prev" aria-label="Previous">‹</button>
+          <div class="pagination" id="pagination"></div>
+          <button id="next" aria-label="Next">›</button>
+        </div>
+        <p class="status" id="status">–</p>
+      </section>
+    </main>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
