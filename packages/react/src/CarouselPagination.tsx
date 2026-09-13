@@ -20,9 +20,8 @@ export function CarouselPagination(props: CarouselPaginationProps) {
   return (
     <div className={props.className} style={props.style} role="tablist">
       {dots.map((i) => (
-        <button
+        <div
           key={i}
-          type="button"
           role="tab"
           aria-selected={i === state.activeIndex}
           aria-label={`Go to slide ${i + 1}`}

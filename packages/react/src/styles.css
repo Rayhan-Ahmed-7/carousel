@@ -1,8 +1,11 @@
-:where(.carousel-root) {
+@layer carousel;
+
+@layer carousel {
+.carousel-root {
   width: 100%;
 }
 
-:where(.carousel-viewport) {
+.carousel-viewport {
   width: 100%;
   height: 300px;
   overflow: hidden;
@@ -13,35 +16,35 @@
   cursor: grab;
 }
 
-:where(.carousel-viewport:active) { cursor: grabbing; }
+.carousel-viewport:active { cursor: grabbing; }
 
-:where(.carousel-viewport-drag) {
+.carousel-viewport-drag {
   user-select: none;
 }
 
-:where(.carousel-viewport-horizontal) {
+.carousel-viewport-horizontal {
   touch-action: var(--carousel-touch-action, pan-y pinch-zoom);
 }
 
-:where(.carousel-viewport-vertical) {
+.carousel-viewport-vertical {
   touch-action: var(--carousel-touch-action, pan-x pinch-zoom);
 }
 
-:where(.carousel-track) {
+.carousel-track {
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
 }
 
-:where(.carousel-controls) {
+.carousel-controls {
   position: absolute;
   inset: 0;
   z-index: 20;
   pointer-events: none;
 }
 
-:where(.carousel-nav) {
+.carousel-nav {
   position: absolute;
   top: 50%;
   width: 40px;
@@ -50,6 +53,9 @@
   display: grid;
   place-items: center;
   padding: 0;
+  appearance: none;
+  font-family: inherit;
+  text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 50%;
   background: rgba(17, 24, 39, 0.78);
@@ -61,10 +67,10 @@
   pointer-events: auto;
 }
 
-:where(.carousel-nav-previous) { left: 16px; }
-:where(.carousel-nav-next) { right: 16px; }
+.carousel-nav-previous { left: 16px; }
+.carousel-nav-next { right: 16px; }
 
-:where(.carousel-pagination) {
+.carousel-pagination {
   position: absolute;
   left: 50%;
   bottom: 16px;
@@ -80,22 +86,25 @@
   pointer-events: auto;
 }
 
-:where(.carousel-pagination-dot) {
+.carousel-pagination-dot {
   width: 8px;
   height: 8px;
   padding: 0;
+  appearance: none;
   border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
   cursor: pointer;
 }
 
-:where(.carousel-pagination-dot-active) {
+.carousel-pagination-dot-active {
   width: 8px;
   height: 8px;
   padding: 0;
+  appearance: none;
   border: 0;
   border-radius: 50%;
   background: white;
   cursor: pointer;
+}
 }
