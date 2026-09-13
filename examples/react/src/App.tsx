@@ -38,7 +38,7 @@ const EFFECT_OPTIONS: Record<string, Record<string, unknown>> = {
     limitProgress: 4,
   },
   cube: {},
-  coverflow: { rotate: 40, depth: 120, spacing: 0.55 },
+  coverflow: { rotate: 50, depth: 120, spacing: 0.55 },
   creative: {
     prev: { translate: [-120, 0, -200], rotate: [0, 0, -12], opacity: 0.4 },
     next: { translate: [120, 0, -200], rotate: [0, 0, 12], opacity: 0.4 },
@@ -47,7 +47,7 @@ const EFFECT_OPTIONS: Record<string, Record<string, unknown>> = {
 };
 
 export function App() {
-  const [effect, setEffect] = useState<EffectName>("card");
+  const [effect, setEffect] = useState<EffectName>("slide");
   const carouselRef = useRef<CoreCarousel | null>(null);
 
   return (
@@ -107,11 +107,12 @@ export function App() {
           transitionDuration: 500,
           loop: "infinite",
           effect,
-          effectOptions: EFFECT_OPTIONS[effect],
+          // effectOptions: EFFECT_OPTIONS[effect],
         }}
       >
         {COLORS.map((color, i) => (
-          <CarouselSlide key={i} index={i}>
+          <CarouselSlide key={i} index={i}
+          >
             <div
               className="slide"
               style={{

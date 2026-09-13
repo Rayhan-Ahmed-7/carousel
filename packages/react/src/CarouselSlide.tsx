@@ -27,7 +27,7 @@ export function CarouselSlide({ index, className, style, children }: CarouselSli
   return (
     <div
       ref={ref}
-      className={className}
+      className={["carousel-slide", className].filter(Boolean).join(" ")}
       data-carousel-slide-index={resolvedIndex}
       style={{
         position: "absolute",
@@ -39,7 +39,6 @@ export function CarouselSlide({ index, className, style, children }: CarouselSli
         borderRadius: 8,
         background: "#d1d5db",
         color: "#111827",
-        userSelect: "none",
         ...style,
       }}
     >

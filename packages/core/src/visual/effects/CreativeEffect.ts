@@ -29,6 +29,20 @@ function n(v: unknown, fallback: number): number {
   return typeof v === "number" && Number.isFinite(v) ? v : fallback;
 }
 
+const DEFAULT_PREVIOUS: Required<CreativeSideOptions> = {
+  translate: [-120, 0, -200],
+  rotate: [0, 0, -12],
+  scale: 1,
+  opacity: 0.4,
+};
+
+const DEFAULT_NEXT: Required<CreativeSideOptions> = {
+  translate: [120, 0, -200],
+  rotate: [0, 0, 12],
+  scale: 1,
+  opacity: 0.4,
+};
+
 export class CreativeEffect implements Effect {
   readonly name = "creative";
   readonly supportsMultipleSlides = true;
@@ -36,8 +50,14 @@ export class CreativeEffect implements Effect {
   readonly loopStrategy = "circular" as const;
 
   compute(ctx: EffectContext): SlideVisualState[] {
-    const prev = (ctx.options.prev ?? {}) as CreativeSideOptions;
-    const next = (ctx.options.next ?? {}) as CreativeSideOptions;
+    const prev = {
+      ...DEFAULT_PREVIOUS,
+      ...((ctx.options.prev ?? {}) as CreativeSideOptions),
+    };
+    const next = {
+      ...DEFAULT_NEXT,
+      ...((ctx.options.next ?? {}) as CreativeSideOptions),
+    };
     const cardSize = ctx.layout.slideSize;
     const centerOffset = (ctx.layout.containerSize - cardSize) / 2;
     const slides: SlideVisualState[] = [];
