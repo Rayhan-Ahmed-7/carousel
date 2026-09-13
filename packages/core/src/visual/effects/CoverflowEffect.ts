@@ -39,7 +39,6 @@ export class CoverflowEffect implements Effect {
       Math.max(1, ctx.layout.slidesPerView / 2),
     );
     const rotationLimit = n(ctx.options.rotationLimit, 1.5);
-    const focusOffset = (ctx.layout.slidesPerView - 1) / 2;
     const cardSize =
       ctx.layout.slidesPerView === 1
         ? ctx.layout.containerSize * singleSlideWidth
@@ -59,8 +58,10 @@ export class CoverflowEffect implements Effect {
         state.width = ctx.layout.crossSize;
         state.height = cardSize;
       }
-      const offset = centerOffset + (d + focusOffset) * stride;
-      ctx.axis.apply(state, offset * spacing + stretch * clamped);
+      ctx.axis.apply(
+        state,
+        centerOffset + d * stride * spacing + stretch * clamped,
+      );
       state.translateZ = -Math.min(abs, 2) * depth;
       if (ctx.axis instanceof HorizontalAxis) {
         state.rotateY = -clamped * rotate;
