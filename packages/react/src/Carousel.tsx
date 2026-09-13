@@ -1,3 +1,5 @@
+/// <reference path="./styles.d.ts" />
+
 import {
   Children,
   cloneElement,
@@ -19,13 +21,13 @@ import {
   KeyboardAdapter,
   PointerEventAdapter,
   ResizeObserverAdapter,
-  applyCarouselDOMDefaults,
 } from "@carousel/dom";
 import {
   CarouselRuntimeContext,
   CarouselSetupContext,
   type CarouselSetupContextValue,
 } from "./context.ts";
+import "./styles.css";
 import {
   isCarouselSlideElement,
   type CarouselSlideProps,
@@ -106,108 +108,54 @@ export function Carousel(props: CarouselProps) {
   const controlsOptions = controls === true ? {} : controls;
   const defaultControls = controlsOptions ? (
     <div
-      className={controlsOptions.className ?? "carousel-controls"}
-      style={{
-        position: "absolute",
-        inset: 0,
-        zIndex: 20,
-        pointerEvents: "none",
-        ...controlsOptions.style,
-      }}
+      className={[
+        "carousel-controls",
+        controlsOptions.className,
+      ].filter(Boolean).join(" ")}
+      style={controlsOptions.style}
     >
       {controlsOptions.previous !== false && (
         <CarouselPrevious
           aria-label="Previous slide"
           {...controlsOptions.previous}
-          style={{
-            position: "absolute",
-            left: 16,
-            top: "50%",
-            width: 40,
-            height: 40,
-            transform: "translateY(-50%)",
-            display: "grid",
-            placeItems: "center",
-            padding: 0,
-            border: "1px solid rgba(255, 255, 255, 0.28)",
-            borderRadius: "50%",
-            background: "rgba(17, 24, 39, 0.78)",
-            color: "white",
-            fontSize: 24,
-            lineHeight: 1,
-            boxShadow: "0 4px 14px rgba(0, 0, 0, 0.24)",
-            cursor: "pointer",
-            pointerEvents: "auto",
-            ...controlsOptions.previous?.style,
-          }}
+          className={[
+            "carousel-nav",
+            "carousel-nav-previous",
+            controlsOptions.previous?.className,
+          ].filter(Boolean).join(" ")}
+          style={controlsOptions.previous?.style}
         />
       )}
       {controlsOptions.next !== false && (
         <CarouselNext
           aria-label="Next slide"
           {...controlsOptions.next}
-          style={{
-            position: "absolute",
-            right: 16,
-            top: "50%",
-            width: 40,
-            height: 40,
-            transform: "translateY(-50%)",
-            display: "grid",
-            placeItems: "center",
-            padding: 0,
-            border: "1px solid rgba(255, 255, 255, 0.28)",
-            borderRadius: "50%",
-            background: "rgba(17, 24, 39, 0.78)",
-            color: "white",
-            fontSize: 24,
-            lineHeight: 1,
-            boxShadow: "0 4px 14px rgba(0, 0, 0, 0.24)",
-            cursor: "pointer",
-            pointerEvents: "auto",
-            ...controlsOptions.next?.style,
-          }}
+          className={[
+            "carousel-nav",
+            "carousel-nav-next",
+            controlsOptions.next?.className,
+          ].filter(Boolean).join(" ")}
+          style={controlsOptions.next?.style}
         />
       )}
       {controlsOptions.pagination !== false && (
         <CarouselPagination
           {...controlsOptions.pagination}
-          style={{
-            position: "absolute",
-            left: "50%",
-            bottom: 16,
-            transform: "translateX(-50%)",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "7px 10px",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            borderRadius: 999,
-            background: "rgba(17, 24, 39, 0.72)",
-            boxShadow: "0 4px 14px rgba(0, 0, 0, 0.24)",
-            pointerEvents: "auto",
-            ...controlsOptions.pagination?.style,
-          }}
-          dotStyle={{
-            width: 8,
-            height: 8,
-            padding: 0,
-            border: 0,
-            borderRadius: "50%",
-            background: "rgba(255, 255, 255, 0.5)",
-            cursor: "pointer",
-            ...controlsOptions.pagination?.dotStyle,
-          }}
-          activeDotStyle={{
-            width: 8,
-            height: 8,
-            padding: 0,
-            border: 0,
-            borderRadius: "50%",
-            background: "white",
-            cursor: "pointer",
-            ...controlsOptions.pagination?.activeDotStyle,
-          }}
+          className={[
+            "carousel-pagination",
+            controlsOptions.pagination?.className,
+          ].filter(Boolean).join(" ")}
+          style={controlsOptions.pagination?.style}
+          dotClassName={[
+            "carousel-pagination-dot",
+            controlsOptions.pagination?.dotClassName,
+          ].filter(Boolean).join(" ")}
+          activeDotClassName={[
+            "carousel-pagination-dot-active",
+            controlsOptions.pagination?.activeDotClassName,
+          ].filter(Boolean).join(" ")}
+          dotStyle={controlsOptions.pagination?.dotStyle}
+          activeDotStyle={controlsOptions.pagination?.activeDotStyle}
         />
       )}
     </div>
@@ -261,18 +209,6 @@ export function Carousel(props: CarouselProps) {
     const keys = new KeyboardAdapter();
     const focus = new FocusManager();
     const resize = new ResizeObserverAdapter();
-
-    applyCarouselDOMDefaults(
-      {
-        viewport: viewportEl.current,
-        track: trackEl.current!,
-        slides: orderedSlides(),
-      },
-      options?.axis ?? "horizontal",
-      perspective,
-      drag,
-      touchAction,
-    );
 
     if (rootEl.current) focus.attach(rootEl.current);
 
@@ -340,30 +276,34 @@ export function Carousel(props: CarouselProps) {
   return (
     <section
       ref={rootRef as unknown as React.Ref<HTMLElement>}
-      className={className}
-      style={{ width: "100%", ...style }}
+      className={["carousel-root", className].filter(Boolean).join(" ")}
+      style={style}
       tabIndex={0}
     >
       <CarouselSetupContext.Provider value={setup}>
         <CarouselRuntimeContext.Provider value={carousel}>
           <div
             ref={viewportRef as unknown as React.Ref<HTMLDivElement>}
-            className={viewportClassName}
+            className={[
+              "carousel-viewport",
+              drag && "carousel-viewport-drag",
+              options?.axis === "vertical"
+                ? "carousel-viewport-vertical"
+                : "carousel-viewport-horizontal",
+              viewportClassName,
+            ].filter(Boolean).join(" ")}
             style={{
-              width: "100%",
-              height: 300,
-              overflow: "hidden",
-              position: "relative",
-              borderRadius: 12,
-              background: "#f3f4f6",
-              cursor: drag ? "grab" : "default",
               ...viewportStyle,
-            }}
+              ...(touchAction ? { touchAction } : {}),
+              ...(perspective !== false
+                ? { "--carousel-perspective": `${perspective}px` }
+                : {}),
+            } as CSSProperties}
           >
             <div
               ref={trackRef as unknown as React.Ref<HTMLDivElement>}
-              className={trackClassName}
-              style={{ position: "relative", width: "100%", height: "100%", ...trackStyle }}
+              className={["carousel-track", trackClassName].filter(Boolean).join(" ")}
+              style={trackStyle}
             >
               {slides.map(({ element, index }) =>
                 cloneElement(element, { index }),

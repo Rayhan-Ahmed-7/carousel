@@ -1,0 +1,101 @@
+:where(.carousel-root) {
+  width: 100%;
+}
+
+:where(.carousel-viewport) {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+  background: #f3f4f6;
+  perspective: var(--carousel-perspective, none);
+  cursor: grab;
+}
+
+:where(.carousel-viewport:active) { cursor: grabbing; }
+
+:where(.carousel-viewport-drag) {
+  user-select: none;
+}
+
+:where(.carousel-viewport-horizontal) {
+  touch-action: var(--carousel-touch-action, pan-y pinch-zoom);
+}
+
+:where(.carousel-viewport-vertical) {
+  touch-action: var(--carousel-touch-action, pan-x pinch-zoom);
+}
+
+:where(.carousel-track) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+:where(.carousel-controls) {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+:where(.carousel-nav) {
+  position: absolute;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  background: rgba(17, 24, 39, 0.78);
+  color: white;
+  font-size: 24px;
+  line-height: 1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+:where(.carousel-nav-previous) { left: 16px; }
+:where(.carousel-nav-next) { right: 16px; }
+
+:where(.carousel-pagination) {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.72);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
+  pointer-events: auto;
+}
+
+:where(.carousel-pagination-dot) {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+:where(.carousel-pagination-dot-active) {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
