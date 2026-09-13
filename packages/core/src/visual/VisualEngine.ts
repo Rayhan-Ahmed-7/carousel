@@ -4,14 +4,14 @@ import type {
   RenderModel,
   SlideVisualState,
 } from "../types/index.ts";
-import type { Axis } from "./direction/Direction.ts";
+import type { AxisStrategy } from "./direction/Direction.ts";
 import { HorizontalAxis } from "./direction/HorizontalAxis.ts";
 import type { Effect } from "./effects/Effect.ts";
 import type { Modifier } from "./modifiers/Modifier.ts";
 
 export interface VisualInput {
   layout: LayoutModel;
-  axis: Axis;
+  axis: AxisStrategy;
   effect: Effect;
   modifiers: Modifier[];
   slideCount: number;
@@ -60,6 +60,11 @@ export class VisualEngine {
     }
     return {
       slides: states,
+      logicalSlideCount: input.slideCount,
+      loopCopies:
+        input.slideCount > 0
+          ? Math.max(1, Math.round(states.length / input.slideCount))
+          : 1,
       trackTranslate: { x: 0, y: 0 },
     };
   }

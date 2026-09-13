@@ -1,6 +1,9 @@
 import type { CarouselState } from "../types/index.ts";
 
-export type StateListener = (state: CarouselState, prev: CarouselState) => void;
+export type StateListener = (
+  state: Readonly<CarouselState>,
+  prev: Readonly<CarouselState>,
+) => void;
 
 export class StateStore {
   private state: CarouselState;
@@ -10,7 +13,7 @@ export class StateStore {
     this.state = { ...initial };
   }
 
-  getState(): CarouselState {
+  getState(): Readonly<CarouselState> {
     return this.state;
   }
 

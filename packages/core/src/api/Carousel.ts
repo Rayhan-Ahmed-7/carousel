@@ -20,7 +20,7 @@ import { ResponsiveConfig } from "../responsive/ResponsiveConfig.ts";
 import { ResponsiveResolver } from "../responsive/ResponsiveResolver.ts";
 import { HorizontalAxis } from "../visual/direction/HorizontalAxis.ts";
 import { VerticalAxis } from "../visual/direction/VerticalAxis.ts";
-import type { Axis } from "../visual/direction/Direction.ts";
+import type { AxisStrategy } from "../visual/direction/Direction.ts";
 import { EffectRegistry } from "../visual/effects/EffectRegistry.ts";
 import { SlideEffect } from "../visual/effects/SlideEffect.ts";
 import { FadeEffect } from "../visual/effects/FadeEffect.ts";
@@ -83,7 +83,7 @@ export class Carousel {
   private options: CarouselOptions;
   private resolver: ResponsiveResolver;
   private navigation!: NavigationStrategy;
-  private axis!: Axis;
+  private axis!: AxisStrategy;
   private axisName!: AxisType;
   private effect!: Effect;
   private modifiers: Modifier[] = [];
@@ -95,6 +95,7 @@ export class Carousel {
   private autoplayTimer: number | null = null;
   private autoplayDelay = 3000;
   private interaction: InteractionEngine | null = null;
+  private dragStartProgress = 0;
 
   constructor(options: CarouselOptions, deps: CarouselDeps) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
@@ -159,11 +160,11 @@ export class Carousel {
     return this.options;
   }
 
-  getState(): CarouselState {
+  getState(): Readonly<CarouselState> {
     return this.store.getState();
   }
 
-  subscribe(fn: (s: CarouselState) => void): () => void {
+  subscribe(fn: (s: Readonly<CarouselState>) => void): () => void {
     return this.store.subscribe((s) => fn(s));
   }
 
@@ -176,6 +177,9 @@ export class Carousel {
   }
 
   next(): void {
+    if (this.store.getState().isAnimating) {
+      return;
+    }
     const s = this.store.getState();
     const target = this.navigation.next({
       activeIndex: s.activeIndex,
@@ -186,6 +190,9 @@ export class Carousel {
   }
 
   previous(): void {
+    if (this.store.getState().isAnimating) {
+      return;
+    }
     const s = this.store.getState();
     const target = this.navigation.previous({
       activeIndex: s.activeIndex,
@@ -197,6 +204,9 @@ export class Carousel {
 
   goTo(index: number, animate = true): void {
     const s = this.store.getState();
+    if (s.isAnimating) {
+      return;
+    }
     const target = this.navigation.goTo(
       {
         activeIndex: s.activeIndex,
@@ -212,16 +222,19 @@ export class Carousel {
       }
       return;
     }
-    const infiniteSlide = this.options.loop === "infinite" && this.effect.name === "slide";
-    const wrapsForward =
-      infiniteSlide && s.activeIndex === s.slideCount - 1 && target === 0;
-    const wrapsBackward =
-      infiniteSlide && s.activeIndex === 0 && target === s.slideCount - 1;
-    const animationTarget = wrapsForward
-      ? s.slideCount
-      : wrapsBackward
-        ? -1
-        : target;
+    const infiniteLoop =
+      this.options.loop === "infinite" &&
+      (this.effect.loopStrategy ?? "none") !== "none" &&
+      s.slideCount > 0;
+    const usesLoopCopies =
+      (this.effect.loopStrategy ?? "none") === "physicalCopies" &&
+      this.layoutCache.slidesPerView > 1;
+    const animationTarget = infiniteLoop
+      ? target +
+        Math.round((s.progress - target) / s.slideCount) * s.slideCount
+      : target;
+    const wrapsForward = infiniteLoop && animationTarget > s.progress && target < s.activeIndex;
+    const wrapsBackward = infiniteLoop && animationTarget < s.progress && target > s.activeIndex;
     const direction: Direction = wrapsForward
       ? "next"
       : wrapsBackward
@@ -265,7 +278,9 @@ export class Carousel {
         this.store.setState({
           activeIndex: target,
           realIndex: target,
-          progress: target,
+          progress: usesLoopCopies || (this.effect.loopStrategy ?? "none") === "circular"
+            ? target
+            : animationTarget,
           isSettling: false,
           isAnimating: false,
         });
@@ -344,18 +359,25 @@ export class Carousel {
       {
         onDragStart: () => {
           if (!this.options.drag) return;
+          this.dragStartProgress = this.store.getState().progress;
           this.animation.cancel();
           this.machine.transition("dragging");
-          this.store.setState({ isDragging: true, isSettling: false });
+          this.store.setState({
+            isDragging: true,
+            isSettling: false,
+            isAnimating: false,
+          });
           this.events.emit("dragStart", undefined);
         },
         onDragMove: (deltaProgress) => {
           if (!this.options.drag) return;
           const s = this.store.getState();
-          const progress = Math.max(
-            0,
-            Math.min(s.activeIndex + deltaProgress, s.slideCount - 1),
-          );
+          const rawProgress = this.dragStartProgress + deltaProgress;
+          const progress =
+            this.options.loop === "infinite" &&
+            (this.effect.loopStrategy ?? "none") !== "none"
+            ? rawProgress
+            : Math.max(0, Math.min(rawProgress, s.slideCount - 1));
           const direction: Direction = deltaProgress > 0
             ? "next"
             : deltaProgress < 0

@@ -1,5 +1,5 @@
 import type { SlideVisualState } from "../../types/index.ts";
-import type { Effect, EffectContext } from "./Effect.ts";
+import { loopOffset, type Effect, type EffectContext } from "./Effect.ts";
 import { HorizontalAxis } from "../direction/HorizontalAxis.ts";
 
 function n(v: unknown, fallback: number): number {
@@ -26,6 +26,7 @@ export class CoverflowEffect implements Effect {
   readonly name = "coverflow";
   readonly supportsMultipleSlides = true;
   readonly navigationMode = "slide" as const;
+  readonly loopStrategy = "circular" as const;
 
   compute(ctx: EffectContext): SlideVisualState[] {
     const rotate = n(ctx.options.rotate, 40);
@@ -47,7 +48,7 @@ export class CoverflowEffect implements Effect {
     const centerOffset = (ctx.layout.containerSize - cardSize) / 2;
     const slides: SlideVisualState[] = [];
     for (let i = 0; i < ctx.slideCount; i++) {
-      const d = i - ctx.progress;
+      const d = loopOffset(i, ctx.progress, ctx.slideCount, ctx.loop === "infinite");
       const abs = Math.abs(d);
       const clamped = Math.max(-rotationLimit, Math.min(rotationLimit, d));
       const state = base(i);

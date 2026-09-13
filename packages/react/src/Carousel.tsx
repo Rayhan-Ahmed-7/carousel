@@ -316,6 +316,7 @@ export function Carousel(props: CarouselProps) {
 
     return () => {
       unsubRender();
+      renderer.destroy();
       pointer.detach();
       keys.detach();
       focus.detach();

@@ -1,7 +1,7 @@
 import type { LayoutModel, SlideVisualState } from "../../types/index.ts";
-import type { Axis } from "./Direction.ts";
+import type { AxisStrategy } from "./Direction.ts";
 
-export class HorizontalAxis implements Axis {
+export class HorizontalAxis implements AxisStrategy {
   apply(state: SlideVisualState, mainAxisOffset: number): void {
     state.translateX = mainAxisOffset;
   }

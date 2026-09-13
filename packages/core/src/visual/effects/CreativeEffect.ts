@@ -1,5 +1,5 @@
 import type { SlideVisualState } from "../../types/index.ts";
-import type { Effect, EffectContext } from "./Effect.ts";
+import { loopOffset, type Effect, type EffectContext } from "./Effect.ts";
 
 export interface CreativeSideOptions {
   translate?: [number, number, number];
@@ -32,13 +32,14 @@ export class CreativeEffect implements Effect {
   readonly name = "creative";
   readonly supportsMultipleSlides = true;
   readonly navigationMode = "slide" as const;
+  readonly loopStrategy = "circular" as const;
 
   compute(ctx: EffectContext): SlideVisualState[] {
     const prev = (ctx.options.prev ?? {}) as CreativeSideOptions;
     const next = (ctx.options.next ?? {}) as CreativeSideOptions;
     const slides: SlideVisualState[] = [];
     for (let i = 0; i < ctx.slideCount; i++) {
-      const d = i - ctx.progress;
+      const d = loopOffset(i, ctx.progress, ctx.slideCount, ctx.loop === "infinite");
       const t = Math.max(-1, Math.min(1, d));
       const factor = Math.abs(t);
       const target = t < 0 ? prev : next;

@@ -1,15 +1,16 @@
 import type { SlideVisualState } from "../../types/index.ts";
-import type { Effect, EffectContext } from "./Effect.ts";
+import { loopOffset, type Effect, type EffectContext } from "./Effect.ts";
 
 export class FadeEffect implements Effect {
   readonly name = "fade";
   readonly supportsMultipleSlides = false;
   readonly navigationMode = "slide" as const;
+  readonly loopStrategy = "circular" as const;
 
   compute(ctx: EffectContext): SlideVisualState[] {
     const slides: SlideVisualState[] = [];
     for (let i = 0; i < ctx.slideCount; i++) {
-      const distance = Math.abs(i - ctx.progress);
+      const distance = Math.abs(loopOffset(i, ctx.progress, ctx.slideCount, ctx.loop === "infinite"));
       const opacity = Math.max(0, 1 - distance);
       slides.push({
         index: i,

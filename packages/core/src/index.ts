@@ -33,7 +33,7 @@ export { PlayCommand } from "./commands/play.ts";
 export { PauseCommand } from "./commands/pause.ts";
 
 export { VisualEngine } from "./visual/VisualEngine.ts";
-export type { Axis as VisualAxis } from "./visual/direction/Direction.ts";
+export type { AxisStrategy as VisualAxis } from "./visual/direction/Direction.ts";
 export { HorizontalAxis } from "./visual/direction/HorizontalAxis.ts";
 export { VerticalAxis } from "./visual/direction/VerticalAxis.ts";
 export type { Effect, EffectContext } from "./visual/effects/Effect.ts";

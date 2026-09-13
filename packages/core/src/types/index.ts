@@ -4,6 +4,8 @@ export type Direction = "next" | "previous" | "none";
 
 export type NavigationMode = "finite" | "infinite" | "rewind";
 
+export type LoopStrategy = "none" | "circular" | "physicalCopies";
+
 export type EffectName =
   | "slide"
   | "fade"
@@ -52,6 +54,8 @@ export type EasingFn = (t: number) => number;
 
 export interface SlideVisualState {
   index: number;
+  /** Physical loop group for this render slot; zero is the logical slide group. */
+  loopCopy?: number;
   width?: number;
   height?: number;
   translateX: number;
@@ -72,12 +76,15 @@ export interface SlideVisualState {
 
 export interface RenderModel {
   slides: SlideVisualState[];
+  logicalSlideCount: number;
+  loopCopies: number;
   trackTranslate: { x: number; y: number };
 }
 
 export interface CarouselState {
   activeIndex: number;
   realIndex: number;
+  /** Continuous visual position; infinite slide mode may use values outside the index range. */
   progress: number;
   isDragging: boolean;
   isSettling: boolean;

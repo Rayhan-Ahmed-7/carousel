@@ -1,5 +1,5 @@
 import type { SlideVisualState } from "../../types/index.ts";
-import type { Effect, EffectContext } from "./Effect.ts";
+import { loopOffset, type Effect, type EffectContext } from "./Effect.ts";
 import { HorizontalAxis } from "../direction/HorizontalAxis.ts";
 
 function n(v: unknown, fallback: number): number {
@@ -26,6 +26,7 @@ export class CardEffect implements Effect {
   readonly name = "card";
   readonly supportsMultipleSlides = false;
   readonly navigationMode = "slide" as const;
+  readonly loopStrategy = "circular" as const;
 
   compute(ctx: EffectContext): SlideVisualState[] {
     const perSlideOffset = n(ctx.options.perSlideOffset, 8);
@@ -68,11 +69,11 @@ export class CardEffect implements Effect {
 
     const slides: SlideVisualState[] = [];
     for (let i = 0; i < ctx.slideCount; i++) {
-      const progress = i - ctx.progress;
+      const progress = loopOffset(i, ctx.progress, ctx.slideCount, ctx.loop === "infinite");
       const isCurrent = i === ctx.activeIndex;
       const isIncoming =
-        (isDraggingForward && i === ctx.activeIndex + 1) ||
-        (isDraggingBackward && i === ctx.activeIndex - 1);
+        (isDraggingForward && i === (ctx.activeIndex + 1) % ctx.slideCount) ||
+        (isDraggingBackward && i === (ctx.activeIndex - 1 + ctx.slideCount) % ctx.slideCount);
       const state = base(i);
       if (ctx.axis instanceof HorizontalAxis) {
         state.width = cardWidth;

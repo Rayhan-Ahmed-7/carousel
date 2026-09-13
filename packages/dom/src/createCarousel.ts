@@ -94,6 +94,7 @@ export function createCarousel(
     carousel,
     destroy() {
       unsub();
+      renderer.destroy();
       pointer.detach();
       keys.detach();
       focus.detach();

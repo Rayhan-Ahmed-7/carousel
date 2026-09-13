@@ -12,20 +12,24 @@ export interface LayoutInput {
 export class LayoutEngine {
   compute(input: LayoutInput): LayoutModel {
     const isH = input.axis === "horizontal";
-    const containerSize = isH ? input.containerWidth : input.containerHeight;
-    const crossSize = isH ? input.containerHeight : input.containerWidth;
-    const spv = Math.max(1, input.slidesPerView);
-    const totalGap = input.gap * (spv - 1);
-    const slideSize = spv > 0 ? (containerSize - totalGap) / spv : containerSize;
+    const containerWidth = finiteNonNegative(input.containerWidth);
+    const containerHeight = finiteNonNegative(input.containerHeight);
+    const containerSize = isH ? containerWidth : containerHeight;
+    const crossSize = isH ? containerHeight : containerWidth;
+    const slideCount = Math.max(0, Math.floor(finiteNonNegative(input.slideCount)));
+    const spv = Math.max(1, finiteNonNegative(input.slidesPerView));
+    const gap = finiteNonNegative(input.gap);
+    const totalGap = gap * (spv - 1);
+    const slideSize = Math.max(0, (containerSize - totalGap) / spv);
 
     const positions: number[] = [];
-    for (let i = 0; i < input.slideCount; i++) {
-      positions.push(i * (slideSize + input.gap));
+    for (let i = 0; i < slideCount; i++) {
+      positions.push(i * (slideSize + gap));
     }
 
     const trackSize =
-      input.slideCount > 0
-        ? input.slideCount * slideSize + Math.max(0, input.slideCount - 1) * input.gap
+      slideCount > 0
+        ? slideCount * slideSize + Math.max(0, slideCount - 1) * gap
         : 0;
 
     const snapPoints = positions.slice();
@@ -35,7 +39,7 @@ export class LayoutEngine {
       containerSize,
       crossSize,
       slideSize,
-      gap: input.gap,
+      gap,
       trackSize,
       slidesPerView: spv,
       positions,
@@ -43,4 +47,8 @@ export class LayoutEngine {
       bounds: { min: 0, max },
     };
   }
+}
+
+function finiteNonNegative(value: number): number {
+  return Number.isFinite(value) ? Math.max(0, value) : 0;
 }

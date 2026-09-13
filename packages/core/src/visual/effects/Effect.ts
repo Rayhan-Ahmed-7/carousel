@@ -1,14 +1,15 @@
 import type {
   Direction,
   LayoutModel,
+  LoopStrategy,
   NavigationMode,
   SlideVisualState,
 } from "../../types/index.ts";
-import type { Axis } from "../direction/Direction.ts";
+import type { AxisStrategy } from "../direction/Direction.ts";
 
 export interface EffectContext {
   layout: LayoutModel;
-  axis: Axis;
+  axis: AxisStrategy;
   activeIndex: number;
   progress: number;
   dragOffsetPx: number;
@@ -24,5 +25,21 @@ export interface Effect {
   readonly name: string;
   readonly supportsMultipleSlides: boolean;
   readonly navigationMode: "page" | "slide";
+  readonly loopStrategy?: LoopStrategy;
   compute(ctx: EffectContext): SlideVisualState[];
+}
+
+export function loopOffset(
+  index: number,
+  progress: number,
+  slideCount: number,
+  infinite: boolean,
+): number {
+  let offset = index - progress;
+  if (!infinite || slideCount <= 1) return offset;
+
+  const half = slideCount / 2;
+  while (offset > half) offset -= slideCount;
+  while (offset < -half) offset += slideCount;
+  return offset;
 }

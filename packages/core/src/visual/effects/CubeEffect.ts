@@ -1,5 +1,5 @@
 import type { SlideVisualState } from "../../types/index.ts";
-import type { Effect, EffectContext } from "./Effect.ts";
+import { loopOffset, type Effect, type EffectContext } from "./Effect.ts";
 
 function base(i: number): SlideVisualState {
   return {
@@ -21,13 +21,14 @@ export class CubeEffect implements Effect {
   readonly name = "cube";
   readonly supportsMultipleSlides = false;
   readonly navigationMode = "slide" as const;
+  readonly loopStrategy = "circular" as const;
 
   compute(ctx: EffectContext): SlideVisualState[] {
     const isH = true;
     const half = ctx.layout.slideSize / 2;
     const slides: SlideVisualState[] = [];
     for (let i = 0; i < ctx.slideCount; i++) {
-      const d = i - ctx.progress;
+      const d = loopOffset(i, ctx.progress, ctx.slideCount, ctx.loop === "infinite");
       const angle = d * 90;
       const state = base(i);
       const axis = isH ? "rotateY" : "rotateX";
