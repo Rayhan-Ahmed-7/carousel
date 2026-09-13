@@ -1,5 +1,6 @@
 import {
   Children,
+  cloneElement,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -7,6 +8,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactElement,
   type ReactNode,
 } from "react";
 import { Carousel as CoreCarousel, type CarouselOptions } from "@carousel/core";
@@ -24,7 +26,10 @@ import {
   CarouselSetupContext,
   type CarouselSetupContextValue,
 } from "./context.ts";
-import { isCarouselSlideElement } from "./CarouselSlide.tsx";
+import {
+  isCarouselSlideElement,
+  type CarouselSlideProps,
+} from "./CarouselSlide.tsx";
 import {
   CarouselNext,
   CarouselPrevious,
@@ -86,7 +91,15 @@ export function Carousel(props: CarouselProps) {
 
   const childCount = Children.count(children);
   const childElements = Children.toArray(children);
-  const slides = childElements.filter(isCarouselSlideElement);
+  const slides = childElements
+    .filter(isCarouselSlideElement)
+    .map((child, childIndex) => {
+      const slide = child as ReactElement<CarouselSlideProps>;
+      return {
+        element: slide,
+        index: slide.props.index ?? childIndex,
+      };
+    });
   const auxiliaryChildren = childElements.filter(
     (child) => !isCarouselSlideElement(child),
   );
@@ -327,7 +340,7 @@ export function Carousel(props: CarouselProps) {
     <section
       ref={rootRef as unknown as React.Ref<HTMLElement>}
       className={className}
-      style={style}
+      style={{ width: "100%", ...style }}
       tabIndex={0}
     >
       <CarouselSetupContext.Provider value={setup}>
@@ -335,14 +348,25 @@ export function Carousel(props: CarouselProps) {
           <div
             ref={viewportRef as unknown as React.Ref<HTMLDivElement>}
             className={viewportClassName}
-            style={{ overflow: "hidden", position: "relative", ...viewportStyle }}
+            style={{
+              width: "100%",
+              height: 300,
+              overflow: "hidden",
+              position: "relative",
+              borderRadius: 12,
+              background: "#f3f4f6",
+              cursor: drag ? "grab" : "default",
+              ...viewportStyle,
+            }}
           >
             <div
               ref={trackRef as unknown as React.Ref<HTMLDivElement>}
               className={trackClassName}
               style={{ position: "relative", width: "100%", height: "100%", ...trackStyle }}
             >
-              {slides}
+              {slides.map(({ element, index }) =>
+                cloneElement(element, { index }),
+              )}
             </div>
             {defaultControls}
           </div>

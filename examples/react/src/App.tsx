@@ -135,8 +135,8 @@ export function App() {
           The default slide effect with no custom effect options.
         </p>
         <Carousel
-          className="carousel"
-          viewportClassName="basic-viewport"
+          // className="carousel"
+          // viewportClassName="basic-viewport"
           options={{
             slidesPerView: 3,
             effect: "slide",
@@ -144,7 +144,7 @@ export function App() {
           }}
         >
           {COLORS.map((color, i) => (
-            <CarouselSlide key={i} index={i}>
+            <CarouselSlide key={i} >
               <div className="basic-slide" style={{ backgroundColor: color }}>
                 {i + 1}
               </div>
