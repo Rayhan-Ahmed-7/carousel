@@ -74,6 +74,7 @@ export function App() {
         key={effect}
         className="carousel"
         viewportClassName="viewport"
+        autoplay={100}
         controls={{
           className: 'custom-controls',
           previous: {

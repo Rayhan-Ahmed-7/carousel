@@ -52,6 +52,7 @@ export interface CarouselControlsOptions {
 
 export interface CarouselProps {
   options?: CarouselOptions;
+  autoplay?: boolean | number;
   drag?: boolean;
   keyboard?: boolean;
   perspective?: number | false;
@@ -70,6 +71,7 @@ export interface CarouselProps {
 export function Carousel(props: CarouselProps) {
   const {
     options,
+    autoplay = false,
     drag = true,
     keyboard = true,
     perspective = 1200,
@@ -203,6 +205,10 @@ export function Carousel(props: CarouselProps) {
       { drag, ...options },
       { measurements, viewportWidth: window.innerWidth },
     )
+
+    if (autoplay) {
+      core.play(typeof autoplay === 'number' ? autoplay : undefined)
+    }
 
     const renderer = new DOMRenderer({ useWillChange: true })
     const pointer = new PointerEventAdapter()
