@@ -1,40 +1,40 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { useCarouselOptional } from "./useCarousel.ts";
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { useCarouselOptional } from './useCarousel'
 
 export interface CarouselNavButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
 export function CarouselPrevious({ children, onClick, ...rest }: CarouselNavButtonProps) {
-  const carousel = useCarouselOptional();
+  const carousel = useCarouselOptional()
   return (
     <button
       type="button"
       aria-label="Previous slide"
       {...rest}
       onClick={(e) => {
-        onClick?.(e);
-        carousel?.previous();
+        onClick?.(e)
+        carousel?.previous()
       }}
     >
-      {children ?? "‹"}
+      {children ?? '‹'}
     </button>
-  );
+  )
 }
 
 export function CarouselNext({ children, onClick, ...rest }: CarouselNavButtonProps) {
-  const carousel = useCarouselOptional();
+  const carousel = useCarouselOptional()
   return (
     <button
       type="button"
       aria-label="Next slide"
       {...rest}
       onClick={(e) => {
-        onClick?.(e);
-        carousel?.next();
+        onClick?.(e)
+        carousel?.next()
       }}
     >
-      {children ?? "›"}
+      {children ?? '›'}
     </button>
-  );
+  )
 }

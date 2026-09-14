@@ -25,5 +25,5 @@ export function createGestureState(): GestureState {
     velocityY: 0,
     startTime: 0,
     lastTime: 0,
-  };
+  }
 }

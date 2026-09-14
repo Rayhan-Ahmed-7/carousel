@@ -1,15 +1,15 @@
-import { useContext } from "react";
-import { CarouselRuntimeContext } from "./context.ts";
-import type { Carousel } from "@carousel/core";
+import { useContext } from 'react'
+import { CarouselRuntimeContext } from './context'
+import type { Carousel } from '@carousel/core'
 
 export function useCarousel(): Carousel {
-  const carousel = useContext(CarouselRuntimeContext);
+  const carousel = useContext(CarouselRuntimeContext)
   if (!carousel) {
-    throw new Error("useCarousel must be used within <Carousel> (after mount)");
+    throw new Error('useCarousel must be used within <Carousel> (after mount)')
   }
-  return carousel;
+  return carousel
 }
 
 export function useCarouselOptional(): Carousel | null {
-  return useContext(CarouselRuntimeContext);
+  return useContext(CarouselRuntimeContext)
 }

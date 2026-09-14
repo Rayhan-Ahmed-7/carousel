@@ -1,4 +1,4 @@
-import type { CarouselState } from "../types/index.ts";
+import type { CarouselState } from '../types/index'
 
 export type StateListener = (
   state: Readonly<CarouselState>,
@@ -6,34 +6,34 @@ export type StateListener = (
 ) => void;
 
 export class StateStore {
-  private state: CarouselState;
-  private listeners = new Set<StateListener>();
+  private state: CarouselState
+  private listeners = new Set<StateListener>()
 
   constructor(initial: CarouselState) {
-    this.state = { ...initial };
+    this.state = { ...initial }
   }
 
   getState(): Readonly<CarouselState> {
-    return this.state;
+    return this.state
   }
 
   setState(patch: Partial<CarouselState>): void {
-    const prev = this.state;
-    const next = { ...prev, ...patch };
-    let changed = false;
+    const prev = this.state
+    const next = { ...prev, ...patch }
+    let changed = false
     for (const key of Object.keys(patch) as (keyof CarouselState)[]) {
       if (prev[key] !== next[key]) {
-        changed = true;
-        break;
+        changed = true
+        break
       }
     }
-    if (!changed) return;
-    this.state = next;
-    for (const fn of Array.from(this.listeners)) fn(next, prev);
+    if (!changed) return
+    this.state = next
+    for (const fn of Array.from(this.listeners)) fn(next, prev)
   }
 
   subscribe(fn: StateListener): () => void {
-    this.listeners.add(fn);
-    return () => this.listeners.delete(fn);
+    this.listeners.add(fn)
+    return () => this.listeners.delete(fn)
   }
 }

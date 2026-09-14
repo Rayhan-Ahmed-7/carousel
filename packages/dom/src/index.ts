@@ -1,12 +1,12 @@
-export { DOMMeasurements } from "./DOMMeasurements.ts";
-export { DOMRenderer } from "./DOMRenderer.ts";
-export { applyCarouselDOMDefaults } from "./DOMRenderer.ts";
-export { PointerEventAdapter } from "./PointerEventAdapter.ts";
-export type { PointerAdapterHandlers } from "./PointerEventAdapter.ts";
-export { KeyboardAdapter } from "./KeyboardAdapter.ts";
-export type { KeyboardHandlers } from "./KeyboardAdapter.ts";
-export { FocusManager } from "./FocusManager.ts";
-export { ResizeObserverAdapter } from "./ResizeObserverAdapter.ts";
-export type { ResizeCallback } from "./ResizeObserverAdapter.ts";
-export { createCarousel } from "./createCarousel.ts";
-export type { DOMBindingElements, DOMBindingOptions } from "./createCarousel.ts";
+export { DOMMeasurements } from './DOMMeasurements'
+export { DOMRenderer } from './DOMRenderer'
+export { applyCarouselDOMDefaults } from './DOMRenderer'
+export { PointerEventAdapter } from './PointerEventAdapter'
+export type { PointerAdapterHandlers } from './PointerEventAdapter'
+export { KeyboardAdapter } from './KeyboardAdapter'
+export type { KeyboardHandlers } from './KeyboardAdapter'
+export { FocusManager } from './FocusManager'
+export { ResizeObserverAdapter } from './ResizeObserverAdapter'
+export type { ResizeCallback } from './ResizeObserverAdapter'
+export { createCarousel } from './createCarousel'
+export type { DOMBindingElements, DOMBindingOptions } from './createCarousel'

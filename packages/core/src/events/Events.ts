@@ -1,4 +1,4 @@
-import type { CarouselState, Direction, Measurements, RenderModel } from "../types/index.ts";
+import type { CarouselState, Direction, Measurements, RenderModel } from '../types/index'
 
 export interface CarouselEvents {
   init: void;

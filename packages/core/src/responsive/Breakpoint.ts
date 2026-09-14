@@ -1,4 +1,4 @@
-import type { CarouselOptions } from "../types/index.ts";
+import type { CarouselOptions } from '../types/index'
 
 export interface Breakpoint {
   minWidth: number;

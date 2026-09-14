@@ -1,7 +1,7 @@
-import type { Command, CommandContext } from "./Command.ts";
+import type { Command, CommandContext } from './Command'
 
 export class PauseCommand implements Command {
   execute(ctx: CommandContext): void {
-    ctx.pause();
+    ctx.pause()
   }
 }

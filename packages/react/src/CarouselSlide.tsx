@@ -1,5 +1,5 @@
-import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
-import { useCarouselSetup } from "./useCarouselSetup.ts";
+import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useCarouselSetup } from './useCarouselSetup'
 
 export interface CarouselSlideProps {
   index?: number;
@@ -9,40 +9,40 @@ export interface CarouselSlideProps {
 }
 
 export const isCarouselSlideElement = (value: ReactNode): boolean =>
-  typeof value === "object" &&
+  typeof value === 'object' &&
   value !== null &&
-  "type" in value &&
-  value.type === CarouselSlide;
+  'type' in value &&
+  value.type === CarouselSlide
 
 export function CarouselSlide({ index, className, style, children }: CarouselSlideProps) {
-  const { registerSlide } = useCarouselSetup();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const resolvedIndex = index ?? 0;
+  const { registerSlide } = useCarouselSetup()
+  const ref = useRef<HTMLDivElement | null>(null)
+  const resolvedIndex = index ?? 0
 
   useLayoutEffect(() => {
-    registerSlide(ref.current, resolvedIndex);
-    return () => registerSlide(null, resolvedIndex);
-  }, [resolvedIndex, registerSlide]);
+    registerSlide(ref.current, resolvedIndex)
+    return () => registerSlide(null, resolvedIndex)
+  }, [resolvedIndex, registerSlide])
 
   return (
     <div
       ref={ref}
-      className={["carousel-slide", className].filter(Boolean).join(" ")}
+      className={['carousel-slide', className].filter(Boolean).join(' ')}
       data-carousel-slide-index={resolvedIndex}
       style={{
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
-        display: "grid",
-        placeItems: "center",
-        overflow: "hidden",
+        display: 'grid',
+        placeItems: 'center',
+        overflow: 'hidden',
         borderRadius: 8,
-        background: "#d1d5db",
-        color: "#111827",
+        background: '#d1d5db',
+        color: '#111827',
         ...style,
       }}
     >
       {children}
     </div>
-  );
+  )
 }

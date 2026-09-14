@@ -3,11 +3,11 @@ import type {
   LayoutModel,
   RenderModel,
   SlideVisualState,
-} from "../types/index.ts";
-import type { AxisStrategy } from "./direction/Direction.ts";
-import { HorizontalAxis } from "./direction/HorizontalAxis.ts";
-import type { Effect } from "./effects/Effect.ts";
-import type { Modifier } from "./modifiers/Modifier.ts";
+} from '../types/index'
+import type { AxisStrategy } from './direction/Direction'
+import { HorizontalAxis } from './direction/HorizontalAxis'
+import type { Effect } from './effects/Effect'
+import type { Modifier } from './modifiers/Modifier'
 
 export interface VisualInput {
   layout: LayoutModel;
@@ -22,7 +22,7 @@ export interface VisualInput {
   isDragging: boolean;
   isSettling: boolean;
   effectOptions: Record<string, unknown>;
-  loop: "finite" | "infinite" | "rewind";
+  loop: 'finite' | 'infinite' | 'rewind';
 }
 
 export class VisualEngine {
@@ -39,24 +39,24 @@ export class VisualEngine {
       slideCount: input.slideCount,
       loop: input.loop,
       options: input.effectOptions,
-    };
-    let states: SlideVisualState[] = input.effect.compute(ctx);
+    }
+    let states: SlideVisualState[] = input.effect.compute(ctx)
     for (const state of states) {
       if (state.width == null && input.axis instanceof HorizontalAxis) {
-        state.width = input.layout.slideSize;
+        state.width = input.layout.slideSize
       }
       if (state.height == null && input.axis instanceof HorizontalAxis) {
-        state.height = input.layout.crossSize;
+        state.height = input.layout.crossSize
       }
       if (state.width == null && !(input.axis instanceof HorizontalAxis)) {
-        state.width = input.layout.crossSize;
+        state.width = input.layout.crossSize
       }
       if (state.height == null && !(input.axis instanceof HorizontalAxis)) {
-        state.height = input.layout.slideSize;
+        state.height = input.layout.slideSize
       }
     }
     for (const mod of input.modifiers) {
-      states = mod.apply(states, ctx);
+      states = mod.apply(states, ctx)
     }
     return {
       slides: states,
@@ -66,6 +66,6 @@ export class VisualEngine {
           ? Math.max(1, Math.round(states.length / input.slideCount))
           : 1,
       trackTranslate: { x: 0, y: 0 },
-    };
+    }
   }
 }

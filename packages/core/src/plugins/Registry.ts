@@ -1,12 +1,12 @@
 export class Registry<T> {
-  private map = new Map<string, T>();
+  private map = new Map<string, T>()
   register(key: string, value: T): void {
-    this.map.set(key, value);
+    this.map.set(key, value)
   }
   get(key: string): T | undefined {
-    return this.map.get(key);
+    return this.map.get(key)
   }
   has(key: string): boolean {
-    return this.map.has(key);
+    return this.map.has(key)
   }
 }

@@ -1,28 +1,28 @@
-import { useRef, useState, type RefObject } from "react";
-import type { Carousel as CoreCarousel, EffectName } from "@carousel/core";
+import { useRef, useState, type RefObject } from 'react'
+import type { Carousel as CoreCarousel, EffectName } from '@carousel/core'
 import {
   Carousel,
   CarouselSlide,
   useCarouselState,
-} from "@carousel/react";
+} from '@carousel/react'
 
-const COLORS = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#a855f7"];
+const COLORS = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#a855f7']
 const IMAGES = [
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=85",
-  "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=1200&q=85",
-  "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1200&q=85",
-  "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
-  "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=85",
-];
+  'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=85',
+]
 const EFFECTS: EffectName[] = [
-  "slide",
-  "fade",
-  "card",
-  "cube",
-  "coverflow",
-  "creative",
-  "flip",
-];
+  'slide',
+  'fade',
+  'card',
+  'cube',
+  'coverflow',
+  'creative',
+  'flip',
+]
 const EFFECT_OPTIONS: Record<string, Record<string, unknown>> = {
   slide: {},
   fade: {},
@@ -44,11 +44,11 @@ const EFFECT_OPTIONS: Record<string, Record<string, unknown>> = {
     next: { translate: [120, 0, -200], rotate: [0, 0, 12], opacity: 0.4 },
   },
   flip: {},
-};
+}
 
 export function App() {
-  const [effect, setEffect] = useState<EffectName>("slide");
-  const carouselRef = useRef<CoreCarousel | null>(null);
+  const [effect, setEffect] = useState<EffectName>('slide')
+  const carouselRef = useRef<CoreCarousel | null>(null)
 
   return (
     <main className="page">
@@ -75,28 +75,28 @@ export function App() {
         className="carousel"
         viewportClassName="viewport"
         controls={{
-          className: "custom-controls",
+          className: 'custom-controls',
           previous: {
-            className: "custom-nav",
-            children: "←",
-            style: { background: "#f59e0b", color: "#111827" },
+            className: 'custom-nav',
+            children: '←',
+            style: { background: '#f59e0b', color: '#111827' },
           },
           next: {
-            className: "custom-nav",
-            children: "→",
-            style: { background: "#f59e0b", color: "#111827" },
+            className: 'custom-nav',
+            children: '→',
+            style: { background: '#f59e0b', color: '#111827' },
           },
           pagination: {
-            className: "custom-pagination",
-            dotStyle: { background: "#9ca3af" },
-            activeDotStyle: { background: "#f59e0b", transform: "scale(1.5)" },
+            className: 'custom-pagination',
+            dotStyle: { background: '#9ca3af' },
+            activeDotStyle: { background: '#f59e0b', transform: 'scale(1.5)' },
           },
         }}
         onReady={(carousel) => {
-          carouselRef.current = carousel;
+          carouselRef.current = carousel
         }}
         options={{
-          axis: "horizontal",
+          axis: 'horizontal',
           slidesPerView: 1,
           gap: 20,
           breakpoints: {
@@ -105,7 +105,7 @@ export function App() {
             1024: { slidesPerView: 4, gap: 40 },
           },
           transitionDuration: 500,
-          loop: "infinite",
+          loop: 'infinite',
           effect,
           // effectOptions: EFFECT_OPTIONS[effect],
         }}
@@ -140,8 +140,8 @@ export function App() {
           // viewportClassName="basic-viewport"
           options={{
             slidesPerView: 3,
-            effect: "slide",
-            loop: "infinite",
+            effect: 'slide',
+            loop: 'infinite',
           }}
         >
           {COLORS.map((color, i) => (
@@ -155,7 +155,18 @@ export function App() {
         </Carousel>
       </section>
     </main>
-  );
+  )
+}
+
+function Status({ effect }: { effect: string }) {
+  const state = useCarouselState()
+  return (
+    <p className="status">
+      effect={effect} active={state.activeIndex} progress=
+      {state.progress.toFixed(2)} dragging={String(state.isDragging)} animating=
+      {String(state.isAnimating)}
+    </p>
+  )
 }
 
 function ExternalControls({
@@ -178,16 +189,6 @@ function ExternalControls({
         </button>
       ))}
     </div>
-  );
+  )
 }
 
-function Status({ effect }: { effect: string }) {
-  const state = useCarouselState();
-  return (
-    <p className="status">
-      effect={effect} active={state.activeIndex} progress=
-      {state.progress.toFixed(2)} dragging={String(state.isDragging)} animating=
-      {String(state.isAnimating)}
-    </p>
-  );
-}

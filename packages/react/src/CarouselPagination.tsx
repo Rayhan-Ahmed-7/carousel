@@ -1,6 +1,6 @@
-import type { CSSProperties } from "react";
-import { useCarouselOptional } from "./useCarousel.ts";
-import { useCarouselState } from "./useCarouselState.ts";
+import type { CSSProperties } from 'react'
+import { useCarouselOptional } from './useCarousel'
+import { useCarouselState } from './useCarouselState'
 
 export interface CarouselPaginationProps {
   className?: string;
@@ -12,24 +12,33 @@ export interface CarouselPaginationProps {
 }
 
 export function CarouselPagination(props: CarouselPaginationProps) {
-  const carousel = useCarouselOptional();
-  const state = useCarouselState();
-  if (state.navigationCount <= 0) return null;
-  const dots: number[] = [];
-  for (let i = 0; i < state.navigationCount; i++) dots.push(i);
+  const carousel = useCarouselOptional()
+  const state = useCarouselState()
+  if (state.navigationCount <= 0) return null
+  const dots: number[] = []
+  for (let i = 0; i < state.navigationCount; i++) dots.push(i)
   return (
     <div className={props.className} style={props.style} role="tablist">
       {dots.map((i) => (
-        <div
+        <button
           key={i}
+          type="button"
           role="tab"
-          aria-selected={i === state.activeIndex}
+          aria-selected={i === Math.min(state.activeIndex, state.navigationCount - 1)}
           aria-label={`Go to slide ${i + 1}`}
-          className={i === state.activeIndex ? props.activeDotClassName : props.dotClassName}
-          style={i === state.activeIndex ? props.activeDotStyle : props.dotStyle}
-          onClick={() => carousel?.goTo(i, true)}
+          className={
+            i === Math.min(state.activeIndex, state.navigationCount - 1)
+              ? props.activeDotClassName
+              : props.dotClassName
+          }
+          style={
+            i === Math.min(state.activeIndex, state.navigationCount - 1)
+              ? props.activeDotStyle
+              : props.dotStyle
+          }
+          onClick={() => carousel?.goTo(i, true, 'next')}
         />
       ))}
     </div>
-  );
+  )
 }

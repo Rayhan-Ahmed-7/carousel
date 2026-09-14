@@ -1,20 +1,20 @@
-export { Carousel } from "./Carousel.tsx";
-export type { CarouselControlsOptions, CarouselProps } from "./Carousel.tsx";
-export { CarouselViewport } from "./CarouselViewport.tsx";
-export type { CarouselViewportProps } from "./CarouselViewport.tsx";
-export { CarouselTrack } from "./CarouselTrack.tsx";
-export type { CarouselTrackProps } from "./CarouselTrack.tsx";
-export { CarouselSlide } from "./CarouselSlide.tsx";
-export type { CarouselSlideProps } from "./CarouselSlide.tsx";
-export { CarouselPrevious, CarouselNext } from "./CarouselNav.tsx";
-export type { CarouselNavButtonProps } from "./CarouselNav.tsx";
-export { CarouselPagination } from "./CarouselPagination.tsx";
-export type { CarouselPaginationProps } from "./CarouselPagination.tsx";
-export { useCarousel, useCarouselOptional } from "./useCarousel.ts";
-export { useCarouselState } from "./useCarouselState.ts";
-export { useCarouselSetup } from "./useCarouselSetup.ts";
+export { Carousel } from './Carousel'
+export type { CarouselControlsOptions, CarouselProps } from './Carousel'
+export { CarouselViewport } from './CarouselViewport'
+export type { CarouselViewportProps } from './CarouselViewport'
+export { CarouselTrack } from './CarouselTrack'
+export type { CarouselTrackProps } from './CarouselTrack'
+export { CarouselSlide } from './CarouselSlide'
+export type { CarouselSlideProps } from './CarouselSlide'
+export { CarouselPrevious, CarouselNext } from './CarouselNav'
+export type { CarouselNavButtonProps } from './CarouselNav'
+export { CarouselPagination } from './CarouselPagination'
+export type { CarouselPaginationProps } from './CarouselPagination'
+export { useCarousel, useCarouselOptional } from './useCarousel'
+export { useCarouselState } from './useCarouselState'
+export { useCarouselSetup } from './useCarouselSetup'
 export {
   CarouselRuntimeContext,
   CarouselSetupContext,
-} from "./context.ts";
-export type { CarouselSetupContextValue } from "./context.ts";
+} from './context'
+export type { CarouselSetupContextValue } from './context'

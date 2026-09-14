@@ -1,5 +1,5 @@
-import type { SlideVisualState } from "../../types/index.ts";
-import type { EffectContext } from "../effects/Effect.ts";
+import type { SlideVisualState } from '../../types/index'
+import type { EffectContext } from '../effects/Effect'
 
 export interface Modifier {
   readonly name: string;

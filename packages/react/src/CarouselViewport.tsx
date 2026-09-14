@@ -1,5 +1,5 @@
-import type { CSSProperties, ReactNode } from "react";
-import { useCarouselSetup } from "./useCarouselSetup.ts";
+import type { CSSProperties, ReactNode } from 'react'
+import { useCarouselSetup } from './useCarouselSetup'
 
 export interface CarouselViewportProps {
   className?: string;
@@ -8,14 +8,14 @@ export interface CarouselViewportProps {
 }
 
 export function CarouselViewport({ className, style, children }: CarouselViewportProps) {
-  const { viewportRef } = useCarouselSetup();
+  const { viewportRef } = useCarouselSetup()
   return (
     <div
       ref={viewportRef as unknown as React.Ref<HTMLDivElement>}
       className={className}
-      style={{ overflow: "hidden", position: "relative", ...style }}
+      style={{ overflow: 'hidden', position: 'relative', ...style }}
     >
       {children}
     </div>
-  );
+  )
 }

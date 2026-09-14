@@ -1,4 +1,4 @@
-import type { LayoutModel, SlideVisualState } from "../../types/index.ts";
+import type { LayoutModel, SlideVisualState } from '../../types/index'
 
 export interface AxisStrategy {
   apply(state: SlideVisualState, mainAxisOffset: number): void;

@@ -1,5 +1,5 @@
-import type { CSSProperties, ReactNode } from "react";
-import { useCarouselSetup } from "./useCarouselSetup.ts";
+import type { CSSProperties, ReactNode } from 'react'
+import { useCarouselSetup } from './useCarouselSetup'
 
 export interface CarouselTrackProps {
   className?: string;
@@ -8,14 +8,14 @@ export interface CarouselTrackProps {
 }
 
 export function CarouselTrack({ className, style, children }: CarouselTrackProps) {
-  const { trackRef } = useCarouselSetup();
+  const { trackRef } = useCarouselSetup()
   return (
     <div
       ref={trackRef as unknown as React.Ref<HTMLDivElement>}
       className={className}
-      style={{ position: "relative", width: "100%", height: "100%", ...style }}
+      style={{ position: 'relative', width: '100%', height: '100%', ...style }}
     >
       {children}
     </div>
-  );
+  )
 }

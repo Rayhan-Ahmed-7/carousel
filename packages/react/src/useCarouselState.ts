@@ -1,6 +1,6 @@
-import { useContext, useSyncExternalStore } from "react";
-import { CarouselRuntimeContext } from "./context.ts";
-import type { CarouselState } from "@carousel/core";
+import { useContext, useSyncExternalStore } from 'react'
+import { CarouselRuntimeContext } from './context'
+import type { CarouselState } from '@carousel/core'
 
 const EMPTY_STATE: CarouselState = {
   activeIndex: 0,
@@ -9,19 +9,19 @@ const EMPTY_STATE: CarouselState = {
   isDragging: false,
   isSettling: false,
   isAnimating: false,
-  direction: "none",
+  direction: 'none',
   slideCount: 0,
   navigationCount: 0,
-};
+}
 
 export function useCarouselState(): CarouselState {
-  const carousel = useContext(CarouselRuntimeContext);
+  const carousel = useContext(CarouselRuntimeContext)
   return useSyncExternalStore(
     (cb) => {
-      if (!carousel) return () => {};
-      return carousel.subscribe(() => cb());
+      if (!carousel) return () => {}
+      return carousel.subscribe(() => cb())
     },
     () => (carousel ? carousel.getState() : EMPTY_STATE),
     () => EMPTY_STATE,
-  );
+  )
 }

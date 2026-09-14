@@ -1,19 +1,19 @@
-export type Axis = "horizontal" | "vertical";
+export type Axis = 'horizontal' | 'vertical';
 
-export type Direction = "next" | "previous" | "none";
+export type Direction = 'next' | 'previous' | 'none';
 
-export type NavigationMode = "finite" | "infinite" | "rewind";
+export type NavigationMode = 'finite' | 'infinite' | 'rewind';
 
-export type LoopStrategy = "none" | "circular" | "physicalCopies";
+export type LoopStrategy = 'none' | 'circular' | 'physicalCopies';
 
 export type EffectName =
-  | "slide"
-  | "fade"
-  | "card"
-  | "cube"
-  | "coverflow"
-  | "creative"
-  | "flip"
+  | 'slide'
+  | 'fade'
+  | 'card'
+  | 'cube'
+  | 'coverflow'
+  | 'creative'
+  | 'flip'
   | (string & {});
 
 /** Common viewport widths are suggested while custom numeric widths remain valid. */
@@ -49,7 +49,7 @@ export interface CarouselOptions {
   breakpoints?: BreakpointsMap;
 }
 
-export type EasingName = "linear" | "easeOutCubic" | "easeInOutCubic";
+export type EasingName = 'linear' | 'easeOutCubic' | 'easeInOutCubic';
 export type EasingFn = (t: number) => number;
 
 export interface SlideVisualState {
@@ -68,7 +68,7 @@ export interface SlideVisualState {
   opacity: number;
   zIndex: number;
   visible: boolean;
-  position?: "absolute" | "relative";
+  position?: 'absolute' | 'relative';
   transformOrigin?: string;
   /** Full CSS transform string. If present, overrides the default builder. */
   transform?: string;
@@ -95,12 +95,12 @@ export interface CarouselState {
 }
 
 export type CarouselStatus =
-  | "initializing"
-  | "idle"
-  | "dragging"
-  | "settling"
-  | "animating"
-  | "destroyed";
+  | 'initializing'
+  | 'idle'
+  | 'dragging'
+  | 'settling'
+  | 'animating'
+  | 'destroyed';
 
 export interface LayoutModel {
   containerSize: number;

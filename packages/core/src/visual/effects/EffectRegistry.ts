@@ -1,17 +1,17 @@
-import type { Effect } from "./Effect.ts";
+import type { Effect } from './Effect'
 
 export class EffectRegistry {
-  private map = new Map<string, Effect>();
+  private map = new Map<string, Effect>()
 
   register(effect: Effect): void {
-    this.map.set(effect.name, effect);
+    this.map.set(effect.name, effect)
   }
 
   get(name: string): Effect | undefined {
-    return this.map.get(name);
+    return this.map.get(name)
   }
 
   has(name: string): boolean {
-    return this.map.has(name);
+    return this.map.has(name)
   }
 }

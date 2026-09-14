@@ -1,4 +1,4 @@
-import type { Measurements } from "@carousel/core";
+import type { Measurements } from '@carousel/core'
 
 export interface DOMMeasurementInput {
   viewport: HTMLElement;
@@ -7,13 +7,13 @@ export interface DOMMeasurementInput {
 
 export class DOMMeasurements {
   measure(input: DOMMeasurementInput): Measurements {
-    const rect = input.viewport.getBoundingClientRect();
+    const rect = input.viewport.getBoundingClientRect()
     const count =
-      "length" in input.slides ? (input.slides as ArrayLike<unknown>).length : 0;
+      'length' in input.slides ? (input.slides as ArrayLike<unknown>).length : 0
     return {
       containerWidth: rect.width,
       containerHeight: rect.height,
       slideCount: count,
-    };
+    }
   }
 }
