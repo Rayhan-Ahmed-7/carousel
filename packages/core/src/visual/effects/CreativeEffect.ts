@@ -45,6 +45,7 @@ const DEFAULT_NEXT: Required<CreativeSideOptions> = {
 
 export class CreativeEffect implements Effect {
   readonly name = 'creative'
+  readonly layout = { positioning: 'slides', height: 'content' } as const
   readonly supportsMultipleSlides = true
   readonly navigationMode = 'slide' as const
   readonly loopStrategy = 'circular' as const
@@ -75,10 +76,8 @@ export class CreativeEffect implements Effect {
       const state = base(i)
       if (ctx.axis instanceof HorizontalAxis) {
         state.width = cardSize
-        state.height = ctx.layout.crossSize
       } else {
         state.width = ctx.layout.crossSize
-        state.height = cardSize
       }
       state.position = 'absolute'
       state.translateX = tr[0] * factor

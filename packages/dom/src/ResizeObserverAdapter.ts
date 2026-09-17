@@ -4,6 +4,8 @@ export class ResizeObserverAdapter {
   private observer: ResizeObserver | null = null
   private cb: ResizeCallback | null = null
   private el: HTMLElement | null = null
+  private frameId: number | null = null
+  private pendingEntry: ResizeObserverEntry | null = null
 
   observe(el: HTMLElement, cb: ResizeCallback): void {
     this.disconnect()
@@ -14,7 +16,14 @@ export class ResizeObserverAdapter {
       return
     }
     this.observer = new ResizeObserver((entries) => {
-      for (const entry of entries) cb(entry)
+      this.pendingEntry = entries[entries.length - 1] ?? null
+      if (this.frameId !== null) return
+      this.frameId = window.requestAnimationFrame(() => {
+        this.frameId = null
+        const entry = this.pendingEntry
+        this.pendingEntry = null
+        if (entry) cb(entry)
+      })
     })
     this.observer.observe(el)
   }
@@ -22,6 +31,9 @@ export class ResizeObserverAdapter {
   disconnect(): void {
     this.observer?.disconnect()
     this.observer = null
+    if (this.frameId !== null) window.cancelAnimationFrame(this.frameId)
+    this.frameId = null
+    this.pendingEntry = null
     window.removeEventListener('resize', this.handleWindowResize)
     this.el = null
     this.cb = null

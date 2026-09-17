@@ -1,4 +1,4 @@
-/// <reference path="./styles.d.ts" />
+import './styles.d.ts'
 
 import {
   Children,
@@ -21,51 +21,42 @@ import {
   KeyboardAdapter,
   PointerEventAdapter,
   ResizeObserverAdapter,
+  applyCarouselDOMDefaults,
+  applyContentHeight,
+  applyTrackLayout,
+  measurementsDiffer,
 } from '@carousel/dom'
-import {
-  CarouselRuntimeContext,
-  CarouselSetupContext,
-  type CarouselSetupContextValue,
-} from './context'
+import { CarouselRuntimeContext, CarouselSetupContext, type CarouselSetupContextValue } from './context'
 import './styles.css'
-import {
-  isCarouselSlideElement,
-  type CarouselSlideProps,
-} from './CarouselSlide'
-import {
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselNavButtonProps,
-} from './CarouselNav'
-import {
-  CarouselPagination,
-  type CarouselPaginationProps,
-} from './CarouselPagination'
+import { isCarouselSlideElement, type CarouselSlideProps } from './CarouselSlide'
+import { CarouselNext, CarouselPrevious, type CarouselNavButtonProps } from './CarouselNav'
+import { CarouselPagination, type CarouselPaginationProps } from './CarouselPagination'
 
 export interface CarouselControlsOptions {
-  className?: string;
-  style?: CSSProperties;
-  previous?: false | CarouselNavButtonProps;
-  next?: false | CarouselNavButtonProps;
-  pagination?: false | CarouselPaginationProps;
+  className?: string
+  style?: CSSProperties
+  previous?: false | CarouselNavButtonProps
+  next?: false | CarouselNavButtonProps
+  pagination?: false | CarouselPaginationProps
 }
 
 export interface CarouselProps {
-  options?: CarouselOptions;
-  autoplay?: boolean | number;
-  drag?: boolean;
-  keyboard?: boolean;
-  perspective?: number | false;
-  touchAction?: string;
-  className?: string;
-  style?: CSSProperties;
-  viewportClassName?: string;
-  viewportStyle?: CSSProperties;
-  trackClassName?: string;
-  trackStyle?: CSSProperties;
-  controls?: boolean | CarouselControlsOptions;
-  children?: ReactNode;
-  onReady?: (carousel: CoreCarousel) => void;
+  options?: CarouselOptions
+  autoplay?: boolean | number
+  drag?: boolean
+  keyboard?: boolean
+  perspective?: number | false
+  touchAction?: string
+  className?: string
+  style?: CSSProperties
+  viewportClassName?: string
+  viewportStyle?: CSSProperties
+  trackClassName?: string
+  trackStyle?: CSSProperties
+  controls?: boolean | CarouselControlsOptions
+  'aria-label'?: string
+  children?: ReactNode
+  onReady?: (carousel: CoreCarousel) => void
 }
 
 export function Carousel(props: CarouselProps) {
@@ -83,6 +74,7 @@ export function Carousel(props: CarouselProps) {
     trackClassName,
     trackStyle,
     controls = true,
+    'aria-label': ariaLabel = 'Carousel',
     children,
     onReady,
   } = props
@@ -95,36 +87,27 @@ export function Carousel(props: CarouselProps) {
 
   const childCount = Children.count(children)
   const childElements = Children.toArray(children)
-  const slides = childElements
-    .filter(isCarouselSlideElement)
-    .map((child, childIndex) => {
-      const slide = child as ReactElement<CarouselSlideProps>
-      return {
-        element: slide,
-        index: slide.props.index ?? childIndex,
-      }
-    })
-  const auxiliaryChildren = childElements.filter(
-    (child) => !isCarouselSlideElement(child),
-  )
+  const slides = childElements.filter(isCarouselSlideElement).map((child, childIndex) => {
+    const slide = child as ReactElement<CarouselSlideProps>
+    return {
+      element: slide,
+      index: slide.props.index ?? childIndex,
+    }
+  })
+  const auxiliaryChildren = childElements.filter((child) => !isCarouselSlideElement(child))
   const controlsOptions = controls === true ? {} : controls
   const defaultControls = controlsOptions ? (
     <div
-      className={[
-        'carousel-controls',
-        controlsOptions.className,
-      ].filter(Boolean).join(' ')}
+      className={['carousel-controls', controlsOptions.className].filter(Boolean).join(' ')}
       style={controlsOptions.style}
     >
       {controlsOptions.previous !== false && (
         <CarouselPrevious
           aria-label="Previous slide"
           {...controlsOptions.previous}
-          className={[
-            'carousel-nav',
-            'carousel-nav-previous',
-            controlsOptions.previous?.className,
-          ].filter(Boolean).join(' ')}
+          className={['carousel-nav', 'carousel-nav-previous', controlsOptions.previous?.className]
+            .filter(Boolean)
+            .join(' ')}
           style={controlsOptions.previous?.style}
         />
       )}
@@ -132,30 +115,19 @@ export function Carousel(props: CarouselProps) {
         <CarouselNext
           aria-label="Next slide"
           {...controlsOptions.next}
-          className={[
-            'carousel-nav',
-            'carousel-nav-next',
-            controlsOptions.next?.className,
-          ].filter(Boolean).join(' ')}
+          className={['carousel-nav', 'carousel-nav-next', controlsOptions.next?.className].filter(Boolean).join(' ')}
           style={controlsOptions.next?.style}
         />
       )}
       {controlsOptions.pagination !== false && (
         <CarouselPagination
           {...controlsOptions.pagination}
-          className={[
-            'carousel-pagination',
-            controlsOptions.pagination?.className,
-          ].filter(Boolean).join(' ')}
+          className={['carousel-pagination', controlsOptions.pagination?.className].filter(Boolean).join(' ')}
           style={controlsOptions.pagination?.style}
-          dotClassName={[
-            'carousel-pagination-dot',
-            controlsOptions.pagination?.dotClassName,
-          ].filter(Boolean).join(' ')}
-          activeDotClassName={[
-            'carousel-pagination-dot-active',
-            controlsOptions.pagination?.activeDotClassName,
-          ].filter(Boolean).join(' ')}
+          dotClassName={['carousel-pagination-dot', controlsOptions.pagination?.dotClassName].filter(Boolean).join(' ')}
+          activeDotClassName={['carousel-pagination-dot-active', controlsOptions.pagination?.activeDotClassName]
+            .filter(Boolean)
+            .join(' ')}
           dotStyle={controlsOptions.pagination?.dotStyle}
           activeDotStyle={controlsOptions.pagination?.activeDotStyle}
         />
@@ -180,7 +152,7 @@ export function Carousel(props: CarouselProps) {
 
   const setup: CarouselSetupContextValue = useMemo(
     () => ({ registerSlide, viewportRef, trackRef }),
-    [registerSlide, viewportRef, trackRef],
+    [registerSlide, viewportRef, trackRef]
   )
 
   useLayoutEffect(() => {
@@ -200,11 +172,28 @@ export function Carousel(props: CarouselProps) {
       viewport: viewportEl.current,
       slides: orderedSlides(),
     })
+    let previousMeasurements = measurements
 
-    const core = new CoreCarousel(
-      { drag, ...options },
-      { measurements, viewportWidth: window.innerWidth },
+    const core = new CoreCarousel({ drag, ...options }, { measurements, viewportWidth: window.innerWidth })
+    const effectLayout = core.getEffectLayout()
+    applyCarouselDOMDefaults(
+      { viewport: viewportEl.current, track: trackEl.current!, slides: orderedSlides() },
+      options?.axis ?? 'horizontal',
+      perspective,
+      effectLayout.positioning,
+      drag,
+      touchAction
     )
+    rootEl.current?.classList.toggle('carousel-root-track', effectLayout.positioning === 'track')
+    applyTrackLayout({ track: trackEl.current!, slides: orderedSlides() }, effectLayout.positioning)
+    applyContentHeight(
+      { viewport: viewportEl.current, slides: orderedSlides() },
+      effectLayout,
+      measurements.containerHeight,
+    )
+    if (effectLayout.height === 'viewport') {
+      viewportEl.current.style.height = `${measurements.containerHeight}px`
+    }
 
     if (autoplay) {
       core.play(typeof autoplay === 'number' ? autoplay : undefined)
@@ -219,7 +208,7 @@ export function Carousel(props: CarouselProps) {
     if (rootEl.current) focus.attach(rootEl.current)
 
     const unsubRender = core.events.on('render', (model) => {
-      renderer.render(orderedSlides(), model)
+      if (trackEl.current) renderer.render(orderedSlides(), model, trackEl.current)
     })
 
     if (drag) {
@@ -246,12 +235,30 @@ export function Carousel(props: CarouselProps) {
         viewport: viewportEl.current,
         slides: orderedSlides(),
       })
-      core.updateViewportWidth(window.innerWidth)
+      applyContentHeight({ viewport: viewportEl.current, slides: orderedSlides() }, effectLayout, m.containerHeight)
+      const measurementsChanged = measurementsDiffer(m, previousMeasurements)
+      if (!measurementsChanged) return
+
+      const heightChanged = m.containerHeight !== previousMeasurements.containerHeight
+
+      if (heightChanged && effectLayout.height === 'viewport') {
+        viewportEl.current.style.height = `${m.containerHeight}px`
+      }
       core.updateMeasurements(m)
+      previousMeasurements = m
     })
 
     const initial = core.getRenderModel()
-    if (initial) renderer.render(orderedSlides(), initial)
+    if (initial && trackEl.current) renderer.render(orderedSlides(), initial, trackEl.current)
+
+    const fittedMeasurements = measurer.measure({
+      viewport: viewportEl.current,
+      slides: orderedSlides(),
+    })
+    if (measurementsDiffer(fittedMeasurements, measurements)) {
+      core.updateMeasurements(fittedMeasurements)
+      previousMeasurements = fittedMeasurements
+    }
 
     setCarousel(core)
     onReady?.(core)
@@ -284,6 +291,7 @@ export function Carousel(props: CarouselProps) {
       className={['carousel-root', className].filter(Boolean).join(' ')}
       style={style}
       tabIndex={0}
+      aria-label={ariaLabel}
     >
       <CarouselSetupContext.Provider value={setup}>
         <CarouselRuntimeContext.Provider value={carousel}>
@@ -292,27 +300,25 @@ export function Carousel(props: CarouselProps) {
             className={[
               'carousel-viewport',
               drag && 'carousel-viewport-drag',
-              options?.axis === 'vertical'
-                ? 'carousel-viewport-vertical'
-                : 'carousel-viewport-horizontal',
+              options?.axis === 'vertical' ? 'carousel-viewport-vertical' : 'carousel-viewport-horizontal',
               viewportClassName,
-            ].filter(Boolean).join(' ')}
-            style={{
-              ...viewportStyle,
-              ...(touchAction ? { touchAction } : {}),
-              ...(perspective !== false
-                ? { '--carousel-perspective': `${perspective}px` }
-                : {}),
-            } as CSSProperties}
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            style={
+              {
+                ...viewportStyle,
+                ...(touchAction ? { touchAction } : {}),
+                ...(perspective !== false ? { '--carousel-perspective': `${perspective}px` } : {}),
+              } as CSSProperties
+            }
           >
             <div
               ref={trackRef as unknown as React.Ref<HTMLDivElement>}
               className={['carousel-track', trackClassName].filter(Boolean).join(' ')}
               style={trackStyle}
             >
-              {slides.map(({ element, index }) =>
-                cloneElement(element, { index }),
-              )}
+              {slides.map(({ element, index }) => cloneElement(element, { index }))}
             </div>
             {defaultControls}
           </div>

@@ -1,4 +1,5 @@
-export { DOMMeasurements } from './DOMMeasurements'
+export { DOMMeasurements, measurementsDiffer } from './DOMMeasurements'
+export { applyContentHeight, applyTrackLayout } from './DOMRenderer'
 export { DOMRenderer } from './DOMRenderer'
 export { applyCarouselDOMDefaults } from './DOMRenderer'
 export { PointerEventAdapter } from './PointerEventAdapter'

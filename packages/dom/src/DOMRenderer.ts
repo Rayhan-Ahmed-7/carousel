@@ -1,4 +1,4 @@
-import type { RenderModel, SlideVisualState } from '@carousel/core'
+import type { EffectLayout, RenderModel, SlideVisualState } from '@carousel/core'
 import type { Axis } from '@carousel/core'
 
 export interface CarouselDOMElements {
@@ -7,15 +7,50 @@ export interface CarouselDOMElements {
   slides: HTMLElement[];
 }
 
+export function applyTrackLayout(
+  elements: Pick<CarouselDOMElements, 'track' | 'slides'>,
+  positioning: EffectLayout['positioning'],
+): void {
+  if (positioning !== 'track') return
+
+  elements.track.style.display = 'flex'
+  elements.track.style.height = 'auto'
+  elements.slides.forEach((slide) => {
+    slide.style.position = 'relative'
+    slide.style.height = 'auto'
+  })
+}
+
+export function applyContentHeight(
+  elements: Pick<CarouselDOMElements, 'viewport' | 'slides'>,
+  layout: EffectLayout,
+  contentHeight: number,
+): void {
+  if (layout.height !== 'content') return
+
+  elements.slides.forEach((slide) => {
+    slide.style.height = `${contentHeight}px`
+  })
+  if (layout.positioning === 'slides') {
+    elements.viewport.style.height = `${contentHeight}px`
+  }
+}
+
 function setIfUnset(element: HTMLElement, property: string, value: string): void {
   const style = element.style as unknown as Record<string, string>
   if (!style[property]) style[property] = value
+}
+
+function setIfChanged(element: HTMLElement, property: string, value: string): void {
+  const style = element.style as unknown as Record<string, string>
+  if (style[property] !== value) style[property] = value
 }
 
 export function applyCarouselDOMDefaults(
   elements: CarouselDOMElements,
   axis: Axis,
   perspective: number | false,
+  positioning: EffectLayout['positioning'],
   drag = true,
   touchAction?: string,
 ): void {
@@ -39,11 +74,13 @@ export function applyCarouselDOMDefaults(
     setIfUnset(elements.viewport, 'perspective', `${perspective}px`)
   }
 
-  for (const slide of elements.slides) {
-    setIfUnset(slide, 'position', 'absolute')
-    setIfUnset(slide, 'top', '0')
-    setIfUnset(slide, 'left', '0')
-    setIfUnset(slide, 'backfaceVisibility', 'hidden')
+  if (positioning === 'slides') {
+    for (const slide of elements.slides) {
+      setIfUnset(slide, 'position', 'absolute')
+      setIfUnset(slide, 'top', '0')
+      setIfUnset(slide, 'left', '0')
+      setIfUnset(slide, 'backfaceVisibility', 'hidden')
+    }
   }
 }
 
@@ -60,7 +97,15 @@ export class DOMRenderer {
     this.opts = opts
   }
 
-  render(slides: HTMLElement[], model: RenderModel): void {
+  render(slides: HTMLElement[], model: RenderModel, track?: HTMLElement): void {
+    if (track) {
+      setIfChanged(
+        track,
+        'transform',
+        `translate3d(${model.trackTranslate.x}px, ${model.trackTranslate.y}px, 0px)`,
+      )
+      setIfChanged(track, 'gap', `${model.trackGap}px`)
+    }
     const renderSlides = this.materializeLoopSlides(slides, model)
     const count = Math.min(renderSlides.length, model.slides.length)
     for (let i = 0; i < count; i++) {
@@ -152,18 +197,21 @@ export class DOMRenderer {
       (s.rotateZ ? ` rotateZ(${s.rotateZ}deg)` : '') +
       (s.scale !== 1 ? ` scale(${s.scale})` : '')
 
-    el.style.transform = transform
-    if (s.position != null) el.style.position = s.position
+    setIfChanged(el, 'transform', transform)
+    if (s.position != null) setIfChanged(el, 'position', s.position)
     if (s.position === 'absolute') {
-      el.style.left = '0'
-      el.style.top = '0'
+      setIfChanged(el, 'left', '0')
+      setIfChanged(el, 'top', '0')
+    } else if (s.position === 'relative') {
+      setIfChanged(el, 'left', 'auto')
+      setIfChanged(el, 'top', 'auto')
     }
-    if (s.width != null) el.style.width = `${s.width}px`
-    if (s.height != null) el.style.height = `${s.height}px`
-    el.style.opacity = String(s.opacity)
-    el.style.zIndex = String(s.zIndex)
-    el.style.visibility = s.visible ? 'visible' : 'hidden'
-    if (s.transformOrigin != null) el.style.transformOrigin = s.transformOrigin
-    if (this.opts.useWillChange) el.style.willChange = 'transform, opacity'
+    if (s.width != null) setIfChanged(el, 'width', `${s.width}px`)
+    if (s.height != null) setIfChanged(el, 'height', `${s.height}px`)
+    setIfChanged(el, 'opacity', String(s.opacity))
+    setIfChanged(el, 'zIndex', String(s.zIndex))
+    setIfChanged(el, 'visibility', s.visible ? 'visible' : 'hidden')
+    if (s.transformOrigin != null) setIfChanged(el, 'transformOrigin', s.transformOrigin)
+    if (this.opts.useWillChange) setIfChanged(el, 'willChange', 'transform, opacity')
   }
 }

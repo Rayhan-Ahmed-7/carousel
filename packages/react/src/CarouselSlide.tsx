@@ -29,18 +29,7 @@ export function CarouselSlide({ index, className, style, children }: CarouselSli
       ref={ref}
       className={['carousel-slide', className].filter(Boolean).join(' ')}
       data-carousel-slide-index={resolvedIndex}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        display: 'grid',
-        placeItems: 'center',
-        overflow: 'hidden',
-        borderRadius: 8,
-        background: '#d1d5db',
-        color: '#111827',
-        ...style,
-      }}
+      style={style}
     >
       {children}
     </div>

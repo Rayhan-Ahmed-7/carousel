@@ -7,6 +7,11 @@ import type {
 } from '../../types/index'
 import type { AxisStrategy } from '../direction/Direction'
 
+export interface EffectLayout {
+  positioning: 'track' | 'slides';
+  height: 'content' | 'viewport';
+}
+
 export interface EffectContext {
   layout: LayoutModel;
   axis: AxisStrategy;
@@ -23,6 +28,7 @@ export interface EffectContext {
 
 export interface Effect {
   readonly name: string;
+  readonly layout: EffectLayout;
   readonly supportsMultipleSlides: boolean;
   readonly navigationMode: 'page' | 'slide';
   readonly loopStrategy?: LoopStrategy;

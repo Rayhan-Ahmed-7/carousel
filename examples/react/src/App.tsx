@@ -72,9 +72,9 @@ export function App() {
 
       <Carousel
         key={effect}
-        className="carousel"
-        viewportClassName="viewport"
-        autoplay={100}
+        // className="carousel"
+        // viewportClassName="viewport"
+        // autoplay={100}
         controls={{
           className: 'custom-controls',
           previous: {
@@ -98,22 +98,21 @@ export function App() {
         }}
         options={{
           axis: 'horizontal',
-          slidesPerView: 1,
+          slidesPerView: 1.2,
           gap: 20,
           breakpoints: {
-            480: { slidesPerView: 2, gap: 20 },
+            480: { slidesPerView: 1.5, gap: 20 },
             768: { slidesPerView: 3, gap: 30 },
             1024: { slidesPerView: 4, gap: 40 },
           },
           transitionDuration: 500,
-          loop: 'infinite',
+          // loop: 'infinite',
           effect,
           // effectOptions: EFFECT_OPTIONS[effect],
         }}
       >
         {COLORS.map((color, i) => (
-          <CarouselSlide key={i} index={i}
-          >
+          <CarouselSlide key={i} index={i}>
             <div
               className="slide"
               style={{

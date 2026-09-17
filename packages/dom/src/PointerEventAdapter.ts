@@ -10,6 +10,9 @@ export class PointerEventAdapter {
   private el: HTMLElement | null = null
   private handlers: PointerAdapterHandlers | null = null
   private pointerId: number | null = null
+  private startX = 0
+  private startY = 0
+  private suppressClick = false
 
   attach(el: HTMLElement, handlers: PointerAdapterHandlers): void {
     this.detach()
@@ -20,6 +23,8 @@ export class PointerEventAdapter {
     el.addEventListener('pointerup', this.onUp)
     el.addEventListener('pointercancel', this.onUp)
     el.addEventListener('pointerleave', this.onLeave)
+    el.addEventListener('click', this.onClick, true)
+    el.addEventListener('dragstart', this.onDragStart)
   }
 
   detach(): void {
@@ -29,9 +34,12 @@ export class PointerEventAdapter {
     this.el.removeEventListener('pointerup', this.onUp)
     this.el.removeEventListener('pointercancel', this.onUp)
     this.el.removeEventListener('pointerleave', this.onLeave)
+    this.el.removeEventListener('click', this.onClick, true)
+    this.el.removeEventListener('dragstart', this.onDragStart)
     this.el = null
     this.handlers = null
     this.pointerId = null
+    this.suppressClick = false
   }
 
   private onDown = (e: PointerEvent): void => {
@@ -39,18 +47,27 @@ export class PointerEventAdapter {
     if (e.pointerType === 'mouse' && e.button !== 0) return
     if (
       e.target instanceof Element &&
-      e.target.closest('button, a, input, select, textarea, [data-carousel-control]')
+      e.target.closest('button, input, select, textarea, [data-carousel-control]')
     ) {
       return
     }
     this.pointerId = e.pointerId
-    this.el.setPointerCapture?.(e.pointerId)
+    this.startX = e.clientX
+    this.startY = e.clientY
+    this.suppressClick = false
     this.handlers.onDown({ x: e.clientX, y: e.clientY, time: e.timeStamp })
   }
 
   private onMove = (e: PointerEvent): void => {
     if (!this.handlers) return
     if (this.pointerId == null || this.pointerId !== e.pointerId) return
+    const movedX = e.clientX - this.startX
+    const movedY = e.clientY - this.startY
+    if (movedX * movedX + movedY * movedY > 64) {
+      this.el?.setPointerCapture?.(e.pointerId)
+      this.suppressClick = true
+      e.preventDefault()
+    }
     this.handlers.onMove({ x: e.clientX, y: e.clientY, time: e.timeStamp })
   }
 
@@ -60,6 +77,17 @@ export class PointerEventAdapter {
     this.el?.releasePointerCapture?.(e.pointerId)
     this.pointerId = null
     this.handlers.onUp({ x: e.clientX, y: e.clientY, time: e.timeStamp })
+  }
+
+  private onClick = (e: MouseEvent): void => {
+    if (!this.suppressClick) return
+    e.preventDefault()
+    e.stopPropagation()
+    this.suppressClick = false
+  }
+
+  private onDragStart = (e: DragEvent): void => {
+    e.preventDefault()
   }
 
   private onLeave = (e: PointerEvent): void => {

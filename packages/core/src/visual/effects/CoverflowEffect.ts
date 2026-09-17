@@ -24,6 +24,7 @@ function base(i: number): SlideVisualState {
 
 export class CoverflowEffect implements Effect {
   readonly name = 'coverflow'
+  readonly layout = { positioning: 'slides', height: 'content' } as const
   readonly supportsMultipleSlides = true
   readonly navigationMode = 'slide' as const
   readonly loopStrategy = 'circular' as const
@@ -31,7 +32,7 @@ export class CoverflowEffect implements Effect {
   compute(ctx: EffectContext): SlideVisualState[] {
     const rotate = n(ctx.options.rotate, 40)
     const depth = n(ctx.options.depth, 120)
-    const spacing = n(ctx.options.spacing, 0.55)
+    const spacing = n(ctx.options.spacing, ctx.layout.slidesPerView > 1 ? 1 : 0.55)
     const stretch = n(ctx.options.stretch, 0)
     const singleSlideWidth = n(ctx.options.singleSlideWidth, 0.72)
     const visibleRange = n(
@@ -53,10 +54,8 @@ export class CoverflowEffect implements Effect {
       const state = base(i)
       if (ctx.axis instanceof HorizontalAxis) {
         state.width = cardSize
-        state.height = ctx.layout.crossSize
       } else {
         state.width = ctx.layout.crossSize
-        state.height = cardSize
       }
       ctx.axis.apply(
         state,
@@ -68,6 +67,7 @@ export class CoverflowEffect implements Effect {
       } else {
         state.rotateX = clamped * rotate
       }
+      state.transformOrigin = 'center center'
       state.opacity = Math.max(0.35, 1 - Math.max(0, abs - 1) * 0.35)
       state.zIndex = Math.round(500 - abs * 10)
       state.visible = abs <= visibleRange

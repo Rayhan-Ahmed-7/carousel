@@ -1,5 +1,6 @@
 import type { SlideVisualState } from '../../types/index'
 import { loopOffset, type Effect, type EffectContext } from './Effect'
+import { HorizontalAxis } from '../direction/HorizontalAxis'
 
 function base(i: number): SlideVisualState {
   return {
@@ -19,21 +20,22 @@ function base(i: number): SlideVisualState {
 
 export class CubeEffect implements Effect {
   readonly name = 'cube'
+  readonly layout = { positioning: 'slides', height: 'content' } as const
   readonly supportsMultipleSlides = false
   readonly navigationMode = 'slide' as const
   readonly loopStrategy = 'circular' as const
 
   compute(ctx: EffectContext): SlideVisualState[] {
-    const isH = true
     const half = ctx.layout.slideSize / 2
     const slides: SlideVisualState[] = []
     for (let i = 0; i < ctx.slideCount; i++) {
       const d = loopOffset(i, ctx.progress, ctx.slideCount, ctx.loop === 'infinite')
       const angle = d * 90
       const state = base(i)
-      const axis = isH ? 'rotateY' : 'rotateX'
+      const axis = ctx.axis instanceof HorizontalAxis ? 'rotateY' : 'rotateX'
       state.transform =
         `translateZ(${-half}px) ${axis}(${angle}deg) translateZ(${half}px)`
+      state.transformOrigin = 'center center'
       const abs = Math.abs(d)
       state.opacity = abs <= 1 ? 1 : Math.max(0, 1 - (abs - 1))
       state.zIndex = Math.round(500 - abs * 10)

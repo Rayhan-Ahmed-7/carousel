@@ -1,28 +1,23 @@
-import type {
-  Direction,
-  LayoutModel,
-  RenderModel,
-  SlideVisualState,
-} from '../types/index'
+import type { Direction, LayoutModel, RenderModel, SlideVisualState } from '../types/index'
 import type { AxisStrategy } from './direction/Direction'
 import { HorizontalAxis } from './direction/HorizontalAxis'
 import type { Effect } from './effects/Effect'
 import type { Modifier } from './modifiers/Modifier'
 
 export interface VisualInput {
-  layout: LayoutModel;
-  axis: AxisStrategy;
-  effect: Effect;
-  modifiers: Modifier[];
-  slideCount: number;
-  activeIndex: number;
-  progress: number;
-  dragOffsetPx: number;
-  dragDirection: Direction;
-  isDragging: boolean;
-  isSettling: boolean;
-  effectOptions: Record<string, unknown>;
-  loop: 'finite' | 'infinite' | 'rewind';
+  layout: LayoutModel
+  axis: AxisStrategy
+  effect: Effect
+  modifiers: Modifier[]
+  slideCount: number
+  activeIndex: number
+  progress: number
+  dragOffsetPx: number
+  dragDirection: Direction
+  isDragging: boolean
+  isSettling: boolean
+  effectOptions: Record<string, unknown>
+  loop: 'finite' | 'infinite' | 'rewind'
 }
 
 export class VisualEngine {
@@ -45,27 +40,44 @@ export class VisualEngine {
       if (state.width == null && input.axis instanceof HorizontalAxis) {
         state.width = input.layout.slideSize
       }
-      if (state.height == null && input.axis instanceof HorizontalAxis) {
+      if (
+        state.height == null &&
+        input.effect.layout.height === 'viewport' &&
+        input.axis instanceof HorizontalAxis
+      ) {
         state.height = input.layout.crossSize
       }
       if (state.width == null && !(input.axis instanceof HorizontalAxis)) {
         state.width = input.layout.crossSize
       }
-      if (state.height == null && !(input.axis instanceof HorizontalAxis)) {
+      if (
+        state.height == null &&
+        input.effect.layout.height === 'viewport' &&
+        !(input.axis instanceof HorizontalAxis)
+      ) {
         state.height = input.layout.slideSize
       }
     }
     for (const mod of input.modifiers) {
       states = mod.apply(states, ctx)
     }
+    const usesTrackTranslation = input.effect.layout.positioning === 'track'
+    const loopCopyOffset =
+      input.loop === 'infinite' && input.slideCount > 1 && input.effect.loopStrategy === 'physicalCopies'
+        ? input.slideCount
+        : 0
+    const trackOffset = usesTrackTranslation
+      ? -(input.progress + loopCopyOffset) * (input.layout.slideSize + input.layout.gap)
+      : 0
     return {
       slides: states,
       logicalSlideCount: input.slideCount,
-      loopCopies:
-        input.slideCount > 0
-          ? Math.max(1, Math.round(states.length / input.slideCount))
-          : 1,
-      trackTranslate: { x: 0, y: 0 },
+      loopCopies: input.slideCount > 0 ? Math.max(1, Math.round(states.length / input.slideCount)) : 1,
+      trackTranslate: {
+        x: input.axis instanceof HorizontalAxis ? trackOffset : 0,
+        y: input.axis instanceof HorizontalAxis ? 0 : trackOffset,
+      },
+      trackGap: input.layout.gap,
     }
   }
 }

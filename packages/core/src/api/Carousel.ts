@@ -29,7 +29,7 @@ import { CubeEffect } from '../visual/effects/CubeEffect'
 import { CoverflowEffect } from '../visual/effects/CoverflowEffect'
 import { CreativeEffect } from '../visual/effects/CreativeEffect'
 import { FlipEffect } from '../visual/effects/FlipEffect'
-import type { Effect } from '../visual/effects/Effect'
+import type { Effect, EffectLayout } from '../visual/effects/Effect'
 import type { Modifier } from '../visual/modifiers/Modifier'
 import { VisualEngine } from '../visual/VisualEngine'
 import { AnimationEngine } from '../animation/AnimationEngine'
@@ -65,8 +65,8 @@ const DEFAULT_OPTIONS: Required<
 }
 
 export interface CarouselDeps {
-  measurements: Measurements;
-  viewportWidth: number;
+  measurements: Measurements
+  viewportWidth: number
 }
 
 export class Carousel {
@@ -111,19 +111,13 @@ export class Carousel {
     this.effects.register(new CreativeEffect())
     this.effects.register(new FlipEffect())
 
-    this.resolver = new ResponsiveResolver(
-      this.options,
-      ResponsiveConfig.parse(this.options.breakpoints),
-    )
+    this.resolver = new ResponsiveResolver(this.options, ResponsiveConfig.parse(this.options.breakpoints))
 
     const breakpointWidth = deps.measurements.containerWidth || deps.viewportWidth
     const resolved = this.resolver.resolve(breakpointWidth)
     this.applyResolved(resolved)
 
-    const startIndex = Math.max(
-      0,
-      Math.min(this.options.startIndex ?? 0, deps.measurements.slideCount - 1),
-    )
+    const startIndex = Math.max(0, Math.min(this.options.startIndex ?? 0, deps.measurements.slideCount - 1))
 
     this.store = new StateStore({
       activeIndex: startIndex,
@@ -141,8 +135,7 @@ export class Carousel {
 
     this.plugins = new PluginManager({
       on: (event, fn) => this.events.on(event as keyof CarouselEvents, fn as never),
-      emit: (event, payload) =>
-        this.events.emit(event as keyof CarouselEvents, payload as never),
+      emit: (event, payload) => this.events.emit(event as keyof CarouselEvents, payload as never),
       api: {
         next: () => this.next(),
         previous: () => this.previous(),
@@ -174,6 +167,10 @@ export class Carousel {
 
   getLayout() {
     return this.layoutCache
+  }
+
+  getEffectLayout(): EffectLayout {
+    return this.effect.layout
   }
 
   next(): void {
@@ -213,7 +210,7 @@ export class Carousel {
         slideCount: s.slideCount,
         slidesPerView: this.navigationSlidesPerView(),
       },
-      index,
+      index
     )
     if (target === s.activeIndex && s.progress === target) {
       if (s.isSettling) {
@@ -223,19 +220,14 @@ export class Carousel {
       return
     }
     const infiniteLoop =
-      this.options.loop === 'infinite' &&
-      (this.effect.loopStrategy ?? 'none') !== 'none' &&
-      s.slideCount > 0
-    const usesLoopCopies =
-      (this.effect.loopStrategy ?? 'none') === 'physicalCopies' &&
-      this.layoutCache.slidesPerView > 1
+      this.options.loop === 'infinite' && (this.effect.loopStrategy ?? 'none') !== 'none' && s.slideCount > 0
+    const usesLoopCopies = (this.effect.loopStrategy ?? 'none') === 'physicalCopies' && s.slideCount > 1
     const animationTarget = infiniteLoop
       ? directionOverride === 'next'
         ? target + (target <= s.activeIndex ? s.slideCount : 0)
         : directionOverride === 'previous'
           ? target - (target >= s.activeIndex ? s.slideCount : 0)
-          : target +
-            Math.round((s.progress - target) / s.slideCount) * s.slideCount
+          : target + Math.round((s.progress - target) / s.slideCount) * s.slideCount
       : target
     const wrapsForward = infiniteLoop && animationTarget > s.progress && target < s.activeIndex
     const wrapsBackward = infiniteLoop && animationTarget < s.progress && target > s.activeIndex
@@ -282,9 +274,7 @@ export class Carousel {
         this.store.setState({
           activeIndex: target,
           realIndex: target,
-          progress: usesLoopCopies || (this.effect.loopStrategy ?? 'none') === 'circular'
-            ? target
-            : animationTarget,
+          progress: usesLoopCopies || (this.effect.loopStrategy ?? 'none') === 'circular' ? target : animationTarget,
           isSettling: false,
           isAnimating: false,
         })
@@ -323,6 +313,12 @@ export class Carousel {
   }
 
   updateMeasurements(m: Measurements): void {
+    const measurementsChanged =
+      m.containerWidth !== this.measurements.containerWidth ||
+      m.containerHeight !== this.measurements.containerHeight ||
+      m.slideCount !== this.measurements.slideCount
+    if (!measurementsChanged) return
+
     const countChanged = m.slideCount !== this.measurements.slideCount
     this.measurements = m
     const resolved = this.resolver.resolve(m.containerWidth || this.viewportWidth)
@@ -378,15 +374,10 @@ export class Carousel {
           const s = this.store.getState()
           const rawProgress = this.dragStartProgress + deltaProgress
           const progress =
-            this.options.loop === 'infinite' &&
-            (this.effect.loopStrategy ?? 'none') !== 'none'
-            ? rawProgress
-            : Math.max(0, Math.min(rawProgress, s.slideCount - 1))
-          const direction: Direction = deltaProgress > 0
-            ? 'next'
-            : deltaProgress < 0
-              ? 'previous'
-              : s.direction
+            this.options.loop === 'infinite' && (this.effect.loopStrategy ?? 'none') !== 'none'
+              ? rawProgress
+              : Math.max(0, Math.min(rawProgress, s.slideCount - 1))
+          const direction: Direction = deltaProgress > 0 ? 'next' : deltaProgress < 0 ? 'previous' : s.direction
           this.store.setState({ progress, direction })
           this.events.emit('dragMove', { progress })
           this.render()
@@ -402,7 +393,7 @@ export class Carousel {
           else if (decision === 'previous') target = s.activeIndex - 1
           this.goTo(target, true)
         },
-      },
+      }
     )
     return this.interaction
   }
@@ -475,9 +466,7 @@ export class Carousel {
   }
 
   private navigationSlidesPerView(): number {
-    return this.effect.navigationMode === 'slide'
-      ? 1
-      : this.layoutCache.slidesPerView
+    return this.effect.navigationMode === 'slide' ? 1 : this.layoutCache.slidesPerView
   }
 
   private computeLayout(): void {
@@ -518,8 +507,7 @@ export class Carousel {
       progress: s.progress,
       isDragging: s.isDragging,
       isSettling: s.isSettling,
-      dragOffsetPx:
-        (s.progress - s.activeIndex) * (this.layoutCache.slideSize + this.layoutCache.gap),
+      dragOffsetPx: (s.progress - s.activeIndex) * (this.layoutCache.slideSize + this.layoutCache.gap),
       dragDirection: s.direction,
       effectOptions: this.options.effectOptions ?? {},
       loop: this.options.loop ?? 'finite',

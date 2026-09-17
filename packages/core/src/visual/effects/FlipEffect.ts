@@ -3,6 +3,7 @@ import { loopOffset, type Effect, type EffectContext } from './Effect'
 
 export class FlipEffect implements Effect {
   readonly name = 'flip'
+  readonly layout = { positioning: 'slides', height: 'content' } as const
   readonly supportsMultipleSlides = false
   readonly navigationMode = 'slide' as const
   readonly loopStrategy = 'circular' as const
@@ -26,6 +27,7 @@ export class FlipEffect implements Effect {
         opacity,
         zIndex: Math.round(500 - abs * 10),
         visible: abs < 1,
+        transformOrigin: 'center center',
       })
     }
     return slides

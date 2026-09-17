@@ -79,6 +79,7 @@ export interface RenderModel {
   logicalSlideCount: number;
   loopCopies: number;
   trackTranslate: { x: number; y: number };
+  trackGap: number;
 }
 
 export interface CarouselState {

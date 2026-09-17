@@ -3,6 +3,7 @@ import { loopOffset, type Effect, type EffectContext } from './Effect'
 
 export class FadeEffect implements Effect {
   readonly name = 'fade'
+  readonly layout = { positioning: 'slides', height: 'content' } as const
   readonly supportsMultipleSlides = false
   readonly navigationMode = 'slide' as const
   readonly loopStrategy = 'circular' as const

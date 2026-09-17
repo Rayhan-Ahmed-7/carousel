@@ -24,6 +24,7 @@ function base(i: number): SlideVisualState {
 
 export class CardEffect implements Effect {
   readonly name = 'card'
+  readonly layout = { positioning: 'slides', height: 'content' } as const
   readonly supportsMultipleSlides = false
   readonly navigationMode = 'slide' as const
   readonly loopStrategy = 'circular' as const
@@ -77,10 +78,8 @@ export class CardEffect implements Effect {
       const state = base(i)
       if (ctx.axis instanceof HorizontalAxis) {
         state.width = cardWidth
-        state.height = ctx.layout.crossSize
       } else {
         state.width = ctx.layout.crossSize
-        state.height = cardWidth
       }
       state.position = 'absolute'
       state.transformOrigin = isCurrent && handoffProgress > 0

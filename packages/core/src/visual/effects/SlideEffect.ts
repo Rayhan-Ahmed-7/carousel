@@ -3,6 +3,7 @@ import type { Effect, EffectContext } from './Effect'
 
 export class SlideEffect implements Effect {
   readonly name = 'slide'
+  readonly layout = { positioning: 'track', height: 'content' } as const
   readonly supportsMultipleSlides = true
   readonly navigationMode = 'page' as const
   readonly loopStrategy = 'physicalCopies' as const
@@ -10,8 +11,7 @@ export class SlideEffect implements Effect {
   compute(ctx: EffectContext): SlideVisualState[] {
     const stride = ctx.layout.slideSize + ctx.layout.gap
     const slides: SlideVisualState[] = []
-    const usesLoopCopies =
-      ctx.loop === 'infinite' && ctx.slideCount > 1 && ctx.layout.slidesPerView > 1
+    const usesLoopCopies = ctx.loop === 'infinite' && ctx.slideCount > 1
     const copies = usesLoopCopies ? [-1, 0, 1] : [0]
 
     for (const copy of copies) {
@@ -29,6 +29,7 @@ export class SlideEffect implements Effect {
           opacity: 1,
           zIndex: 0,
           visible: true,
+          position: 'relative',
         }
         let progressOffset = i + copy * ctx.slideCount - ctx.progress
         if (!usesLoopCopies && ctx.loop === 'infinite' && ctx.slideCount > 1) {
@@ -36,7 +37,6 @@ export class SlideEffect implements Effect {
           while (progressOffset > half) progressOffset -= ctx.slideCount
           while (progressOffset < -half) progressOffset += ctx.slideCount
         }
-        ctx.axis.apply(state, progressOffset * stride)
         slides.push(state)
       }
     }
