@@ -17,7 +17,6 @@ export function applyTrackLayout(
   elements.track.style.height = 'auto'
   elements.slides.forEach((slide) => {
     slide.style.position = 'relative'
-    slide.style.height = 'auto'
   })
 }
 
@@ -28,9 +27,6 @@ export function applyContentHeight(
 ): void {
   if (layout.height !== 'content') return
 
-  elements.slides.forEach((slide) => {
-    slide.style.height = `${contentHeight}px`
-  })
   if (layout.positioning === 'slides') {
     elements.viewport.style.height = `${contentHeight}px`
   }
